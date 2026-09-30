@@ -79,7 +79,7 @@ pnpm exec wrangler deploy
 
 The custom domain is declared in `wrangler.jsonc` under `routes`, so a deploy also keeps `learn.ratishfolio.com` attached.
 
-Pushes to `main` deploy automatically through `.github/workflows/deploy.yml`. Add two repository secrets (Settings, Secrets and variables, Actions): `CLOUDFLARE_API_TOKEN` (an API token with the "Edit Cloudflare Workers" template) and `CLOUDFLARE_ACCOUNT_ID`. Without the token the workflow builds and skips the deploy.
+Pushes to `main` deploy automatically through Cloudflare Workers Builds (the repo is connected to the `learn-ai-daily` Worker). Build command `pnpm build`, deploy command `pnpm exec wrangler deploy`.
 
 ## Feedback
 
