@@ -1,21 +1,34 @@
 # build output
 dist/
+
 # generated types
 .astro/
+worker-configuration.d.ts
 
 # dependencies
 node_modules/
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
+# cloudflare / wrangler local state
+.wrangler/
+.dev.vars*
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
 
-# macOS-specific files
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# editors and tooling
+.idea/
+.claude/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# macOS
 .DS_Store

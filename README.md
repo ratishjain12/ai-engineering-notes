@@ -1,49 +1,81 @@
-# Starlight Starter Kit: Basics
+# AI Engineering Notes
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+**Learning AI engineering in public, one topic at a time.**
+
+I write up one AI engineering topic at a time: what I understood and the resources I used. No fixed syllabus. The next topic is whatever is worth understanding next.
+
+**Live site: https://learn.ratishfolio.com**
+
+![AI Engineering Notes](public/og-default.png)
+
+## Topics
+
+| # | Topic | Notes |
+| - | ----- | ----- |
+| 01 | [Attention](https://learn.ratishfolio.com/llms/attention/) | Q, K, V, softmax, self vs cross attention, causal and multi-head attention, engineering trade-offs |
+
+## Stack
+
+- [Astro](https://astro.build) 7 + [Starlight](https://starlight.astro.build) for the docs
+- [Tailwind CSS](https://tailwindcss.com) v4 with semantic theme tokens (light and dark)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/) with static assets, served on a custom domain
+- Self-hosted fonts via Fontsource: Newsreader, IBM Plex Sans, JetBrains Mono
+
+## Features
+
+- Landing page and docs with a warm paper-and-ink theme, light and dark
+- Resizable sidebar and content width, collapsible sidebar and table of contents (remembered per reader)
+- Built-in search (Pagefind)
+- SEO: canonical URLs, sitemap, `robots.txt`, Open Graph and Twitter cards, `WebSite` and `TechArticle` structured data
+
+## Getting started
+
+Requires Node 22.12+ and [pnpm](https://pnpm.io).
+
+```bash
+pnpm install
+pnpm dev          # http://localhost:4321
+pnpm build        # output in ./dist
+pnpm preview      # preview the production build
+```
+
+## Project structure
 
 ```
-pnpm create astro@latest -- --template starlight
+src/
+  assets/                logo files
+  components/Landing.astro   landing page
+  content/docs/
+    index.mdx            landing page entry
+    llms/                topic pages and their images
+  routeData.ts           per-page structured data
+  styles/global.css      theme, typography, layout tweaks
+public/
+  pane-resize.js         sidebar and content resize / collapse
+  og-default.png         social share image
+  robots.txt
+astro.config.mjs         Starlight, sidebar, head tags
+wrangler.jsonc           Cloudflare Worker and custom domain
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Adding a topic
 
-## 🚀 Project Structure
+1. Create `src/content/docs/<section>/<topic>.md` with `title` and `description` frontmatter.
+2. Put images next to it in `<topic>-assets/` and give every image real alt text. Start the alt text of formula images with `Formula` so they get the white card styling.
+3. Add the page to the `sidebar` in `astro.config.mjs`.
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+## Deploying
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+Deployed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/):
+
+```bash
+pnpm build
+pnpm exec wrangler login   # first time only
+pnpm exec wrangler deploy
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+The custom domain is declared in `wrangler.jsonc` under `routes`, so a deploy also keeps `learn.ratishfolio.com` attached.
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+## Feedback
 
-Static assets, like favicons, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+Spotted a mistake or have a resource that should be linked? Open an issue or reach out on X.

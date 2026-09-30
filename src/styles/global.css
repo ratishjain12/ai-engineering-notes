@@ -1,0 +1,236 @@
+@layer base, starlight, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@import '@fontsource-variable/newsreader/index.css';
+@import '@fontsource-variable/newsreader/wght-italic.css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
+
+@theme {
+	--font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+	--font-serif: 'Newsreader Variable', Georgia, serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+	/* vermilion accent */
+	--color-accent-50: #fff4ef;
+	--color-accent-100: #ffe3d8;
+	--color-accent-200: #ffc2ab;
+	--color-accent-300: #ff9a72;
+	--color-accent-400: #ff6f40;
+	--color-accent-500: #f04c1e;
+	--color-accent-600: #bf3410;
+	--color-accent-700: #9a2a0f;
+	--color-accent-800: #7a2412;
+	--color-accent-900: #4f1a10;
+	--color-accent-950: #2b0f09;
+
+	/* warm paper / ink neutrals */
+	--color-gray-50: #f8f4ec;
+	--color-gray-100: #f1ebdf;
+	--color-gray-200: #e4dccb;
+	--color-gray-300: #c9bfaa;
+	--color-gray-400: #9c9280;
+	--color-gray-500: #736b5d;
+	--color-gray-600: #564f44;
+	--color-gray-700: #3d372f;
+	--color-gray-800: #27231e;
+	--color-gray-900: #1b1814;
+	--color-gray-950: #12100d;
+}
+
+@theme inline {
+	--color-fg: var(--sl-color-white);
+	--color-fg-muted: var(--sl-color-gray-2);
+	--color-fg-subtle: var(--sl-color-gray-3);
+	--color-line: var(--sl-color-hairline);
+	--color-line-strong: var(--sl-color-gray-4);
+	--color-brand-text: var(--brand-text);
+	--color-brand-solid: var(--brand-solid);
+	--color-brand-solid-hover: var(--brand-solid-hover);
+	--color-on-solid: var(--on-solid);
+}
+
+:root {
+	--sl-content-width: 44rem;
+	--sl-text-h1: 2.5rem;
+	--sl-line-height: 1.7;
+}
+
+:root[data-theme='light'] {
+	--brand-text: #bf3410;
+	--brand-solid: #bf3410;
+	--brand-solid-hover: #9a2a0f;
+	--on-solid: #ffffff;
+	--sl-color-bg: #f6f1e7;
+	--sl-color-bg-nav: #f6f1e7;
+	--sl-color-bg-sidebar: #f1ebdf;
+	--sl-color-hairline: #e0d7c4;
+	--sl-color-hairline-light: #e0d7c4;
+}
+
+:root[data-theme='dark'] {
+	--brand-text: #ff8a5c;
+	--brand-solid: #ff6f40;
+	--brand-solid-hover: #ff9a72;
+	--on-solid: #12100d;
+	--sl-color-accent: #e0522b;
+	--sl-color-accent-high: #ffb399;
+	--sl-color-text-accent: #ff8a5c;
+	--sl-color-bg: #12100d;
+	--sl-color-bg-nav: #12100d;
+	--sl-color-bg-sidebar: #171410;
+	--sl-color-hairline: #2a251f;
+	--sl-color-hairline-light: #2a251f;
+}
+
+h1,
+h2,
+h3,
+.sl-markdown-content :is(h1, h2, h3, h4) {
+	font-family: var(--font-serif);
+	font-weight: 500;
+	letter-spacing: -0.015em;
+}
+
+.sl-markdown-content img {
+	display: block;
+	max-width: min(100%, 36rem);
+	height: auto;
+	margin-inline: 0 auto;
+	border-radius: 0.5rem;
+	border: 1px solid var(--sl-color-hairline);
+}
+
+/* formula PNGs are black-on-white: show them as a white card in both themes */
+.sl-markdown-content img[alt^='Formula'] {
+	background: #fff;
+	padding: 0.75rem 1.25rem;
+	max-width: 100%;
+}
+
+/* diagrams are transparent with dark text, so give them a paper card in dark mode */
+:root[data-theme='dark'] .sl-markdown-content img:not([alt^='Formula']) {
+	background: #f6f1e7;
+	border-color: transparent;
+}
+
+.site-title {
+	font-family: var(--font-mono);
+	font-weight: 600;
+	font-size: 0.95rem;
+	letter-spacing: -0.03em;
+}
+
+:focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}
+
+body:has(#landing) .content-panel:has(h1#_top) {
+	display: none;
+}
+
+body:has(#landing) .content-panel {
+	padding-inline: 0;
+}
+
+body:has(#landing) .sl-container {
+	max-width: none;
+}
+
+body:has(#landing) {
+	--sl-nav-pad-x: max(1rem, calc((100% - 60rem) / 2));
+}
+
+.pane-handle {
+	display: none;
+	position: fixed;
+	top: var(--sl-nav-height);
+	bottom: 0;
+	width: 6px;
+	z-index: 5;
+	cursor: col-resize;
+	touch-action: none;
+}
+.pane-handle::after {
+	content: '';
+	position: absolute;
+	inset: 0 2px;
+	background: transparent;
+	transition: background-color 0.15s;
+}
+.pane-handle:hover::after,
+.pane-handle:focus-visible::after,
+.pane-handle.active::after {
+	background: var(--sl-color-accent);
+}
+.pane-dragging {
+	cursor: col-resize;
+	user-select: none;
+}
+@media (min-width: 50rem) {
+	.pane-handle {
+		display: block;
+	}
+}
+
+.pane-toggle {
+	display: none;
+	position: fixed;
+	top: calc(var(--sl-nav-height) + 0.5rem);
+	z-index: 6;
+	width: 2rem;
+	height: 2rem;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.4rem;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-gray-3);
+	cursor: pointer;
+	transition: color 0.15s, border-color 0.15s;
+}
+.pane-toggle:hover {
+	color: var(--sl-color-white);
+	border-color: var(--sl-color-gray-4);
+}
+.sidebar-closed .sidebar-pane,
+.sidebar-closed .pane-handle[data-pane='sb'] {
+	display: none;
+}
+@media (min-width: 50rem) {
+	.pane-toggle-closed {
+		display: inline-flex;
+	}
+}
+@media (min-width: 72rem) {
+	.pane-toggle-toc {
+		display: inline-flex;
+	}
+	.toc-closed .right-sidebar-container {
+		display: none;
+	}
+	.toc-closed .main-pane {
+		width: 100%;
+		--sl-content-margin-inline: auto;
+	}
+}
+
+@media (min-width: 50rem) {
+	.sidebar-content {
+		padding-top: 3rem;
+	}
+}
