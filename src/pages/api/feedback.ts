@@ -1,10 +1,13 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { isSlug, json, readBody } from '../../lib/api';
+import { isSlug, json, rateLimited, readBody } from '../../lib/api';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
+	const limited = await rateLimited(request, 'feedback');
+	if (limited) return limited;
+
 	const body = await readBody(request);
 	if (!body || !isSlug(body.slug)) return json({ error: 'Invalid request' }, 400);
 	if (body.website) return json({ ok: true });
