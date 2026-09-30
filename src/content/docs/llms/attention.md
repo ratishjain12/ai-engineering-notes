@@ -156,3 +156,7 @@ Attention's computational and memory requirements ultimately affect inference co
 - [Self-Attention vs Cross-Attention](https://medium.com/@xiaxiami/self-attention-vs-cross-attention-from-fundamentals-to-applications-4b065285f3f8)
 - [FlashAttention](https://arxiv.org/abs/2205.14135)
 - [Modern Methods of Text Generation](https://arxiv.org/pdf/2009.04968)
+
+---
+
+_I'm learning this in public. If something here is unclear or wrong, I'd like to hear it: [@ratishtwts](https://x.com/ratishtwts) on X._
