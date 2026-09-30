@@ -1,0 +1,132 @@
+---
+import Subscribe from './Subscribe.astro';
+
+const slug = Astro.locals.starlightRoute.entry.id;
+---
+
+<section class="engagement not-content mt-12 grid gap-6 border-t border-line pt-8 text-fg-muted" data-slug={slug}>
+	<div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+		<button
+			type="button"
+			class="like inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-line px-4 text-fg transition-colors hover:border-brand-solid"
+			aria-pressed="false"
+		>
+			<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+				<path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"></path>
+			</svg>
+			<span>Helpful</span>
+			<span class="count font-mono text-sm text-fg-muted"></span>
+		</button>
+		<button type="button" class="fb-toggle cursor-pointer border-0 bg-transparent p-0 text-sm text-brand-text underline">
+			Suggest an improvement
+		</button>
+	</div>
+
+	<form class="feedback grid gap-2" hidden>
+		<label for="fb-message" class="sr-only">Your feedback</label>
+		<textarea
+			id="fb-message"
+			name="message"
+			rows="3"
+			maxlength="2000"
+			required
+			placeholder="What was unclear, wrong, or missing?"
+			class="rounded-lg border border-line bg-transparent p-3 text-fg"></textarea>
+		<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
+		<div class="flex items-center gap-3">
+			<button
+				type="submit"
+				class="min-h-11 cursor-pointer rounded-lg border border-brand-solid bg-brand-solid px-5 font-medium text-on-solid transition-colors hover:border-brand-solid-hover hover:bg-brand-solid-hover"
+			>
+				Send
+			</button>
+			<p class="fb-status m-0 text-sm" role="status" aria-live="polite"></p>
+		</div>
+	</form>
+
+	<Subscribe source={slug} />
+</section>
+
+<script>
+	const root = document.querySelector<HTMLElement>('.engagement');
+	if (root) {
+		const slug = root.dataset.slug!;
+		const likeKey = `liked:${slug}`;
+		const likeBtn = root.querySelector<HTMLButtonElement>('.like')!;
+		const countEl = root.querySelector<HTMLElement>('.count')!;
+		const form = root.querySelector<HTMLFormElement>('form.feedback')!;
+		const fbStatus = root.querySelector<HTMLElement>('.fb-status')!;
+
+		const store = {
+			has: () => {
+				try {
+					return localStorage.getItem(likeKey) === '1';
+				} catch {
+					return false;
+				}
+			},
+			set: () => {
+				try {
+					localStorage.setItem(likeKey, '1');
+				} catch {}
+			},
+		};
+
+		const render = (count: number | null, liked: boolean) => {
+			countEl.textContent = count === null ? '' : String(count);
+			likeBtn.setAttribute('aria-pressed', String(liked));
+			likeBtn.classList.toggle('border-brand-solid', liked);
+			likeBtn.querySelector('svg')!.setAttribute('fill', liked ? 'currentColor' : 'none');
+		};
+
+		let count: number | null = null;
+		render(count, store.has());
+
+		fetch(`/api/like?slug=${encodeURIComponent(slug)}`)
+			.then((r) => r.json())
+			.then((b) => {
+				count = b.count;
+				render(count, store.has());
+			})
+			.catch(() => {});
+
+		likeBtn.addEventListener('click', async () => {
+			if (store.has()) return;
+			store.set();
+			render((count ?? 0) + 1, true);
+			try {
+				const res = await fetch('/api/like', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ slug }),
+				});
+				count = (await res.json()).count;
+				render(count, true);
+			} catch {}
+		});
+
+		root.querySelector('.fb-toggle')!.addEventListener('click', () => {
+			form.hidden = !form.hidden;
+			if (!form.hidden) form.querySelector('textarea')!.focus();
+		});
+
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const data = new FormData(form);
+			fbStatus.textContent = 'Sending...';
+			try {
+				const res = await fetch('/api/feedback', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ slug, message: data.get('message'), website: data.get('website') }),
+				});
+				const body = await res.json();
+				if (!res.ok) throw new Error(body.error);
+				form.reset();
+				fbStatus.textContent = 'Thanks, this helps.';
+			} catch (err) {
+				fbStatus.textContent = err instanceof Error && err.message ? err.message : 'Something went wrong. Try again.';
+			}
+		});
+	}
+</script>

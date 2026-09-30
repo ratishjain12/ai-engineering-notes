@@ -1,4 +1,6 @@
 ---
+import Subscribe from './Subscribe.astro';
+
 const steps = [
 	{ title: 'One topic at a time', body: 'Small, focused and explained from first principles, so you can read it over coffee.' },
 	{ title: 'Real resources', body: 'The papers, videos and posts I actually learned from, linked on every page.' },
@@ -74,5 +76,8 @@ const weights = [
 			I share what I'm learning as I go. If you're on the same path, or spot something I got wrong, I'm
 			<a href="https://x.com/ratishtwts" class="text-brand-text">@ratishtwts</a> on X.
 		</p>
+		<div class="mt-6 max-w-xl">
+			<Subscribe source="landing" />
+		</div>
 	</section>
 </div>

@@ -9,6 +9,14 @@
 		"binding": "ASSETS"
 	},
 	"routes": [{ "pattern": "learn.ratishfolio.com", "custom_domain": true }],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "learn-ai-engagement",
+			"database_id": "e4728e47-6627-4f55-83ac-3cef982ef3d2",
+			"migrations_dir": "migrations"
+		}
+	],
 	"observability": {
 		"enabled": true
 	}

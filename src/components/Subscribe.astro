@@ -1,0 +1,50 @@
+---
+const { source } = Astro.props as { source: string };
+---
+
+<form class="subscribe not-content grid gap-2" data-source={source}>
+	<label for={`email-${source}`} class="font-medium text-fg">Get notified when a new topic drops</label>
+	<div class="flex flex-wrap gap-2">
+		<input
+			id={`email-${source}`}
+			type="email"
+			name="email"
+			required
+			autocomplete="email"
+			placeholder="you@example.com"
+			class="min-h-11 min-w-0 flex-1 basis-56 rounded-lg border border-line bg-transparent px-3 text-fg"
+		/>
+		<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
+		<button
+			type="submit"
+			class="min-h-11 cursor-pointer rounded-lg border border-brand-solid bg-brand-solid px-5 font-medium text-on-solid transition-colors hover:border-brand-solid-hover hover:bg-brand-solid-hover"
+		>
+			Notify me
+		</button>
+	</div>
+	<p class="status m-0 min-h-5 text-sm text-fg-muted" role="status" aria-live="polite">No spam. Just new topics.</p>
+</form>
+
+<script>
+	document.querySelectorAll<HTMLFormElement>('form.subscribe').forEach((form) => {
+		const status = form.querySelector<HTMLElement>('.status')!;
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const data = new FormData(form);
+			status.textContent = 'Saving...';
+			try {
+				const res = await fetch('/api/subscribe', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: data.get('email'), website: data.get('website'), source: form.dataset.source }),
+				});
+				const body = await res.json();
+				if (!res.ok) throw new Error(body.error);
+				form.reset();
+				status.textContent = "You're on the list. Thanks!";
+			} catch (err) {
+				status.textContent = err instanceof Error && err.message ? err.message : 'Something went wrong. Try again.';
+			}
+		});
+	});
+</script>
