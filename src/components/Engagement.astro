@@ -22,7 +22,8 @@ const slug = Astro.locals.starlightRoute.entry.id;
 		</button>
 	</div>
 
-	<form class="feedback grid gap-2" hidden>
+	<div class="fb-wrap" hidden>
+	<form class="feedback grid gap-2">
 		<label for="fb-message" class="sr-only">Your feedback</label>
 		<textarea
 			id="fb-message"
@@ -43,6 +44,7 @@ const slug = Astro.locals.starlightRoute.entry.id;
 			<p class="fb-status m-0 text-sm" role="status" aria-live="polite"></p>
 		</div>
 	</form>
+	</div>
 
 	<Subscribe source={slug} />
 </section>
@@ -54,6 +56,7 @@ const slug = Astro.locals.starlightRoute.entry.id;
 		const likeKey = `liked:${slug}`;
 		const likeBtn = root.querySelector<HTMLButtonElement>('.like')!;
 		const countEl = root.querySelector<HTMLElement>('.count')!;
+		const wrap = root.querySelector<HTMLElement>('.fb-wrap')!;
 		const form = root.querySelector<HTMLFormElement>('form.feedback')!;
 		const fbStatus = root.querySelector<HTMLElement>('.fb-status')!;
 
@@ -85,6 +88,7 @@ const slug = Astro.locals.starlightRoute.entry.id;
 		fetch(`/api/like?slug=${encodeURIComponent(slug)}`)
 			.then((r) => r.json())
 			.then((b) => {
+				if (typeof b.count !== 'number') return;
 				count = b.count;
 				render(count, store.has());
 			})
@@ -106,8 +110,8 @@ const slug = Astro.locals.starlightRoute.entry.id;
 		});
 
 		root.querySelector('.fb-toggle')!.addEventListener('click', () => {
-			form.hidden = !form.hidden;
-			if (!form.hidden) form.querySelector('textarea')!.focus();
+			wrap.hidden = !wrap.hidden;
+			if (!wrap.hidden) form.querySelector('textarea')!.focus();
 		});
 
 		form.addEventListener('submit', async (e) => {
