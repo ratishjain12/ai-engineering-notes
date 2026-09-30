@@ -20,6 +20,14 @@ export default defineConfig({
       },
       head: [
         { tag: 'script', attrs: { src: '/pane-resize.js' } },
+        {
+          tag: 'script',
+          attrs: {
+            type: 'module',
+            src: 'https://static.cloudflareinsights.com/beacon.min.js',
+            'data-cf-beacon': JSON.stringify({ token: 'f4514f485a994bb9b3ba88b2947bd77b' }),
+          },
+        },
         { tag: 'link', attrs: { rel: 'icon', href: '/favicon-32.png', sizes: '32x32', type: 'image/png' } },
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#f6f1e7', media: '(prefers-color-scheme: light)' } },
