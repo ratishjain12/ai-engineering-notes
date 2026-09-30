@@ -32,6 +32,7 @@ export default defineConfig({
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#f6f1e7', media: '(prefers-color-scheme: light)' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#12100d', media: '(prefers-color-scheme: dark)' } },
+        { tag: 'meta', attrs: { name: 'google-site-verification', content: 'WwRrUvB9n4SV1ozebr73-snX6vIwH40nF2IQNz9Y6v0' } },
         { tag: 'meta', attrs: { name: 'twitter:site', content: '@ratishtwts' } },
         { tag: 'meta', attrs: { name: 'twitter:creator', content: '@ratishtwts' } },
         { tag: 'meta', attrs: { property: 'og:image', content: `${site}/og-default.png` } },
