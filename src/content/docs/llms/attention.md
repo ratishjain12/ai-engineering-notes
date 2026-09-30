@@ -159,4 +159,4 @@ Attention's computational and memory requirements ultimately affect inference co
 
 ---
 
-_I'm learning this in public. If something here is unclear or wrong, I'd like to hear it: [@ratishtwts](https://x.com/ratishtwts) on X._
+_I'm learning this in public. If something here is unclear or wrong, I'd like to hear it: [@ratishtwts](https://x.com/ratishtwts) on&nbsp;X._
