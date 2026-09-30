@@ -24,6 +24,8 @@ export default defineConfig({
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#f6f1e7', media: '(prefers-color-scheme: light)' } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#12100d', media: '(prefers-color-scheme: dark)' } },
+        { tag: 'meta', attrs: { name: 'twitter:site', content: '@ratishtwts' } },
+        { tag: 'meta', attrs: { name: 'twitter:creator', content: '@ratishtwts' } },
         { tag: 'meta', attrs: { property: 'og:image', content: `${site}/og-default.png` } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
@@ -40,12 +42,15 @@ export default defineConfig({
             url: site,
             description: 'Learning AI engineering in public, one topic at a time.',
             inLanguage: 'en',
-            author: { '@type': 'Person', name: 'Ratish Jain' },
+            author: { '@type': 'Person', name: 'Ratish Jain', url: 'https://www.ratishfolio.com', sameAs: ['https://x.com/ratishtwts', 'https://github.com/ratishjain12'] },
           }),
         },
       ],
       routeMiddleware: './src/routeData.ts',
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ratishjain12/ai-engineering-notes' }],
+      social: [
+        { icon: 'x.com', label: 'X', href: 'https://x.com/ratishtwts' },
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/ratishjain12/ai-engineering-notes' },
+      ],
       customCss: ['./src/styles/global.css'],
       sidebar: [
         {

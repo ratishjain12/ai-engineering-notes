@@ -26,7 +26,8 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 - Landing page and docs with a warm paper-and-ink theme, light and dark
 - Resizable sidebar and content width, collapsible sidebar and table of contents (remembered per reader)
 - Built-in search (Pagefind)
-- SEO: canonical URLs, sitemap, `robots.txt`, Open Graph and Twitter cards, `WebSite` and `TechArticle` structured data
+- SEO: canonical URLs, sitemap, `robots.txt`, `WebSite` and `TechArticle` structured data
+- Social sharing: a generated Open Graph / Twitter card image for every topic (`/og/<topic>.png`)
 
 ## Getting started
 
@@ -48,7 +49,9 @@ src/
   content/docs/
     index.mdx            landing page entry
     llms/                topic pages and their images
-  routeData.ts           per-page structured data
+  lib/og.ts              social card renderer (Satori + resvg)
+  pages/og/              per-topic card endpoint
+  routeData.ts           per-page OG image and structured data
   styles/global.css      theme, typography, layout tweaks
 public/
   pane-resize.js         sidebar and content resize / collapse
@@ -60,7 +63,7 @@ wrangler.jsonc           Cloudflare Worker and custom domain
 
 ## Adding a topic
 
-1. Create `src/content/docs/<section>/<topic>.md` with `title` and `description` frontmatter.
+1. Create `src/content/docs/<section>/<topic>.md` with `title`, `description` and `date` (`YYYY-MM-DD`) frontmatter. The social card is generated from these.
 2. Put images next to it in `<topic>-assets/` and give every image real alt text. Start the alt text of formula images with `Formula` so they get the white card styling.
 3. Add the page to the `sidebar` in `astro.config.mjs`.
 
@@ -76,6 +79,12 @@ pnpm exec wrangler deploy
 
 The custom domain is declared in `wrangler.jsonc` under `routes`, so a deploy also keeps `learn.ratishfolio.com` attached.
 
+Pushes to `main` deploy automatically through `.github/workflows/deploy.yml`. Add two repository secrets (Settings, Secrets and variables, Actions): `CLOUDFLARE_API_TOKEN` (an API token with the "Edit Cloudflare Workers" template) and `CLOUDFLARE_ACCOUNT_ID`. Without the token the workflow builds and skips the deploy.
+
 ## Feedback
 
-Spotted a mistake or have a resource that should be linked? Open an issue or reach out on X.
+Spotted a mistake or have a resource that should be linked? Open an issue or reach out on [X (@ratishtwts)](https://x.com/ratishtwts).
+
+## License
+
+Code is [MIT](LICENSE) licensed. The written notes in `src/content/docs` are shared under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): reuse them with attribution.

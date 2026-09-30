@@ -1,6 +1,7 @@
 ---
 title: Attention
 description: How a token decides which other tokens matter, from Q, K, V to multi-head attention.
+date: 2026-09-30
 ---
 
 ## What Problem Does Attention Solve?
