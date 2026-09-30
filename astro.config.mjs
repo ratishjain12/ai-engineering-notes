@@ -45,6 +45,7 @@ export default defineConfig({
         },
       ],
       routeMiddleware: './src/routeData.ts',
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ratishjain12/ai-engineering-notes' }],
       customCss: ['./src/styles/global.css'],
       sidebar: [
         {
