@@ -66,7 +66,10 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Large Language Models',
-          items: [{ autogenerate: { directory: 'llms' } }],
+          items: [
+            { label: 'Day 01 · Attention', slug: 'llms/attention' },
+            { label: 'Day 02 · KV Cache', slug: 'llms/kv-cache' },
+          ],
         },
       ],
     }),

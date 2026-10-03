@@ -2,9 +2,6 @@
 title: KV Cache
 description: How KV Cache speeds up LLM inference by reusing Keys and Values, the GPU memory it costs, and how PagedAttention, GQA and MQA tame it.
 date: 2026-10-02
-sidebar:
-  order: 2
-  label: 'Day 02 · KV Cache'
 ---
 
 ## Why KV Cache exists
