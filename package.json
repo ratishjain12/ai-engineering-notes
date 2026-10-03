@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "new": "node scripts/new-post.mjs",
     "generate-types": "wrangler types"
   },
   "dependencies": {

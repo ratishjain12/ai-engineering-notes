@@ -90,7 +90,6 @@ let failed = false;
 
 for (const file of files) {
 	const post = readPost(file);
-	if (!post.title) throw new Error(`${file}: missing title`);
 	if (scan && !post.date) continue;
 	if (post.draft) {
 		console.log(`${post.slug}: draft, skipping`);
@@ -100,6 +99,7 @@ for (const file of files) {
 		console.log(`${post.slug}: scheduled for ${post.date}, skipping`);
 		continue;
 	}
+	if (!post.title || !post.description) throw new Error(`${file}: published posts need a title and description`);
 	if (TEST_TO) {
 		console.log(`${post.slug}: test send to ${TEST_TO}`, await send(post, { email: TEST_TO, token: '0'.repeat(32) }));
 		continue;
