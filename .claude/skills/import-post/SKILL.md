@@ -35,10 +35,14 @@ Input: a path to a Notion export (zip, or an unzipped folder with one `.md` and 
 7. **Sidebar:** add `{ label: 'Day NN · <Title>', slug: '<section>/<slug>' }` under the section in `astro.config.mjs`.
 8. **README:** add the row to the Topics table, matching the existing rows.
 9. **Verify:** run `pnpm build`; it must pass. Spot-check one built page under `dist/client/<section>/<slug>/index.html` for the images and sidebar label.
-10. **Show the user a short summary of the diff and stop.**
+10. **Branch and PR.** Never commit to `main` directly.
+    - `git checkout -b post/<slug>` from an up-to-date `main`.
+    - Commit the post, its assets, the sidebar and README changes: `Add <Title> post`.
+    - `git push -u origin post/<slug>`, then `gh pr create --base main` with title `Add <Title> post` and a short body: the one-line description, the image count, and "Merging publishes this and emails subscribers."
+    - Give the user the PR URL and stop. Do not merge.
 
-## Do not push without asking
+## Merging is publishing
 
-Pushing a new post to `main` triggers the notify workflow, which **emails every active subscriber** once the page is live (once per slug). So commit and push only when the user says to publish. If they want to hold it back, add `draft: true` to the frontmatter: Starlight leaves drafts out of the build and `scripts/notify.mjs` skips them; remove it later in a normal commit and the daily scan picks the post up.
+Merging the PR to `main` deploys the site and triggers the notify workflow, which **emails every active subscriber** once the page is live (once per slug). The user decides when to merge. To hold a post back after merging, add `draft: true` to the frontmatter: Starlight leaves drafts out of the build and `scripts/notify.mjs` skips them; remove it later in a normal commit and the daily scan picks the post up.
 
-Preview before publishing with `pnpm dev`.
+Preview before merging with `pnpm dev`.
