@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
 	if (!EMAIL.test(email) || email.length > 254) return json({ error: 'Enter a valid email' }, 400);
 
 	const source = typeof body.source === 'string' ? body.source.slice(0, 100) : 'unknown';
-	await env.DB.prepare('INSERT OR IGNORE INTO subscribers (email, source, token) VALUES (?, ?, lower(hex(randomblob(16))))')
+	await env.DB.prepare('INSERT INTO subscribers (email, source, token) VALUES (?, ?, lower(hex(randomblob(16)))) ON CONFLICT(email) DO UPDATE SET unsubscribed_at = NULL')
 		.bind(email, source)
 		.run();
 	return json({ ok: true });
