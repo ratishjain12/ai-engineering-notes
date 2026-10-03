@@ -17,6 +17,8 @@
 			"migrations_dir": "migrations"
 		}
 	],
+	"kv_namespaces": [{ "binding": "SESSION", "id": "53780f6ce8f9434896649a4a1e73faad" }],
+	"previews": { "kv_namespaces": [{ "binding": "SESSION", "id": "53780f6ce8f9434896649a4a1e73faad" }] },
 	"ratelimits": [{ "name": "LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }],
 	"observability": {
 		"enabled": true
