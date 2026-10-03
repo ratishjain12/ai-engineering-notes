@@ -20,6 +20,7 @@ export default defineConfig({
       },
       head: [
         { tag: 'script', attrs: { src: '/pane-resize.js' } },
+        { tag: 'script', attrs: { src: '/track.js', defer: true } },
         {
           tag: 'script',
           attrs: {

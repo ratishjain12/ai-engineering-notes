@@ -1,0 +1,41 @@
+name: Notify subscribers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/docs/**/*.md'
+      - 'src/content/docs/**/*.mdx'
+
+concurrency: notify-subscribers
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Only files *added* in this push count as a new post; edits to existing posts don't.
+      - name: Find new posts
+        id: new
+        run: |
+          BEFORE=${{ github.event.before }}
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE=HEAD~1; fi
+          FILES=$(git diff --diff-filter=A --name-only "$BEFORE" HEAD -- 'src/content/docs/**/*.md' 'src/content/docs/**/*.mdx' | tr '\n' ' ')
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Email subscribers
+        if: steps.new.outputs.files != ''
+        run: node scripts/notify.mjs ${{ steps.new.outputs.files }}
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
