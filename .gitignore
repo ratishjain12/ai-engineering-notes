@@ -25,7 +25,8 @@ pnpm-debug.log*
 
 # editors and tooling
 .idea/
-.claude/
+.claude/*
+!.claude/skills/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/launch.json
