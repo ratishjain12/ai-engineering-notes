@@ -9,7 +9,7 @@ export function renderEmail(post, unsub) {
 	const url = `${SITE}/${post.slug}/?${utm}`;
 	const home = `${SITE}/?${utm}`;
 
-	const text = `${section.toUpperCase()}\n\n${post.title}\n\n${post.description}\n\nRead it: ${url}\n\n--\nAI Engineering Notes by Ratish Jain\nUnsubscribe: ${unsub}`;
+	const text = `${section.toUpperCase()}\n\n${post.title}\n\n${post.description}\n\nRead it: ${url}\n\nWhat should I cover next? Tell me: ${url}#feedback\n\n--\nAI Engineering Notes by Ratish Jain\nUnsubscribe: ${unsub}`;
 
 	const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(post.title)}</title></head>
@@ -30,9 +30,10 @@ export function renderEmail(post, unsub) {
       <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#bf3410;border-radius:8px;">
         <a href="${url}" style="display:inline-block;padding:13px 26px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">Read the note &rarr;</a>
       </td></tr></table>
+      <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #e4dccb;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#564f44;">What should I cover next, or what was unclear? <a href="${url}#feedback" style="color:#bf3410;font-weight:bold;">Tell me in one line &rarr;</a></p>
     </td></tr>
     <tr><td style="padding:20px 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#736b5d;">
-      You're getting this because you subscribed at <a href="${home}" style="color:#736b5d;">learn.ratishfolio.com</a>.<br>
+      You're getting this because you subscribed at <a href="${home}" style="color:#736b5d;">learn.ratishfolio.com</a>. Landed in Promotions? Drag it to Primary so you don't miss the next one.<br>
       Written by Ratish Jain &middot; <a href="https://x.com/ratishtwts" style="color:#736b5d;">@ratishtwts</a> &middot; <a href="${unsub}" style="color:#736b5d;">Unsubscribe</a>
     </td></tr>
   </table>

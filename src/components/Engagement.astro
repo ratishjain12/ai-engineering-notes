@@ -4,7 +4,7 @@ import Subscribe from './Subscribe.astro';
 const slug = Astro.locals.starlightRoute.entry.id;
 ---
 
-<section class="engagement not-content mt-12 grid gap-6 border-t border-line pt-8 text-fg-muted" data-slug={slug}>
+<section id="feedback" class="engagement not-content mt-12 grid gap-6 border-t border-line pt-8 text-fg-muted" data-slug={slug}>
 	<div class="flex flex-wrap items-center gap-x-5 gap-y-3">
 		<button
 			type="button"
@@ -113,6 +113,11 @@ const slug = Astro.locals.starlightRoute.entry.id;
 			wrap.hidden = !wrap.hidden;
 			if (!wrap.hidden) form.querySelector('textarea')!.focus();
 		});
+
+		if (location.hash === '#feedback') {
+			wrap.hidden = false;
+			form.querySelector('textarea')!.focus({ preventScroll: true });
+		}
 
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
