@@ -38,7 +38,12 @@ Input: a path to a Notion export (zip, or an unzipped folder with one `.md` and 
 10. **Branch and PR.** Never commit to `main` directly.
     - `git checkout -b post/<slug>` from an up-to-date `main`.
     - Commit the post, its assets, the sidebar and README changes: `Add <Title> post`.
-    - `git push -u origin post/<slug>`, then `gh pr create --base main` with title `Add <Title> post` and a short body: the one-line description, the image count, and "Merging publishes this and emails subscribers."
+    - `git push -u origin post/<slug>`, then `gh pr create --base main`.
+    - Title: `Add <Title> post`. Body follows `.github/pull_request_template.md`:
+      - **Summary**: the post's one-line description.
+      - **Changes**: the post file, N images, sidebar entry, README row.
+      - **Verification**: `pnpm build` result.
+      - **Publishing**: the checklist, with items ticked only if actually true. Keep the warning that merging emails subscribers.
     - Give the user the PR URL and stop. Do not merge.
 
 ## Merging is publishing
