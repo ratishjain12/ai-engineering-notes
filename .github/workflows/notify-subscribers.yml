@@ -6,12 +6,16 @@ on:
     paths:
       - 'src/content/docs/**/*.md'
       - 'src/content/docs/**/*.mdx'
+  schedule:
+    - cron: '0 6 * * *' # picks up posts whose date has arrived
+  workflow_dispatch:
 
 concurrency: notify-subscribers
 
 jobs:
   notify:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,18 +27,23 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      # Only files *added* in this push count as a new post; edits to existing posts don't.
+      # Only files *added* in a push count as new; edits to existing posts don't.
+      # Scheduled/manual runs scan every dated, published post not yet sent.
       - name: Find new posts
         id: new
         run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "args=--scan" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           BEFORE=${{ github.event.before }}
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE=HEAD~1; fi
+          if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then BEFORE=HEAD~1; fi
           FILES=$(git diff --diff-filter=A --name-only "$BEFORE" HEAD -- 'src/content/docs/**/*.md' 'src/content/docs/**/*.mdx' | tr '\n' ' ')
-          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          echo "args=$FILES" >> "$GITHUB_OUTPUT"
 
       - name: Email subscribers
-        if: steps.new.outputs.files != ''
-        run: node scripts/notify.mjs ${{ steps.new.outputs.files }}
+        if: steps.new.outputs.args != ''
+        run: node scripts/notify.mjs ${{ steps.new.outputs.args }}
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -3,27 +3,35 @@ import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
-async function unsubscribe(token: string | null) {
-	if (!token || !/^[a-f0-9]{32}$/.test(token)) return false;
-	const res = await env.DB.prepare(
-		"UPDATE subscribers SET unsubscribed_at = datetime('now') WHERE token = ? AND unsubscribed_at IS NULL",
-	)
+const valid = (token: string | null): token is string => !!token && /^[a-f0-9]{32}$/.test(token);
+
+async function unsubscribe(token: string) {
+	const row = await env.DB.prepare('SELECT 1 FROM subscribers WHERE token = ?').bind(token).first();
+	if (!row) return false;
+	await env.DB.prepare("UPDATE subscribers SET unsubscribed_at = datetime('now') WHERE token = ? AND unsubscribed_at IS NULL")
 		.bind(token)
 		.run();
-	return res.meta.changes > 0 || !!(await env.DB.prepare('SELECT 1 FROM subscribers WHERE token = ?').bind(token).first());
+	return true;
 }
 
-const page = (message: string, status: number) =>
+const page = (body: string, status = 200) =>
 	new Response(
-		`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribe</title><body style="font-family:system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><p>${message}</p><p><a href="/">Back to AI Engineering Notes</a></p>`,
+		`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unsubscribe</title><body style="font-family:system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem">${body}<p><a href="/">Back to AI Engineering Notes</a></p>`,
 		{ status, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
 	);
 
-export const GET: APIRoute = async ({ url }) =>
-	(await unsubscribe(url.searchParams.get('token')))
-		? page("You're unsubscribed. No more emails.", 200)
-		: page('This unsubscribe link is invalid.', 400);
+// GET only confirms: link scanners prefetch URLs and must not unsubscribe anyone.
+export const GET: APIRoute = ({ url }) => {
+	const token = url.searchParams.get('token');
+	if (!valid(token)) return page('<p>This unsubscribe link is invalid.</p>', 400);
+	return page(
+		`<p>Unsubscribe from AI Engineering Notes emails?</p><form method="post" action="/api/unsubscribe?token=${token}"><button type="submit" style="padding:.6rem 1.2rem;font-size:1rem">Yes, unsubscribe</button></form>`,
+	);
+};
 
-// RFC 8058 one-click unsubscribe
-export const POST: APIRoute = async ({ url }) =>
-	new Response(null, { status: (await unsubscribe(url.searchParams.get('token'))) ? 200 : 400 });
+// Used by the confirm button and by RFC 8058 one-click unsubscribe from mail clients.
+export const POST: APIRoute = async ({ url }) => {
+	const token = url.searchParams.get('token');
+	if (!valid(token) || !(await unsubscribe(token))) return page('<p>This unsubscribe link is invalid.</p>', 400);
+	return page("<p>You're unsubscribed. No more emails.</p>");
+};
