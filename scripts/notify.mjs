@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Usage: node scripts/notify.mjs <docs-file>...   emails those posts
 //        node scripts/notify.mjs --scan           emails every published post not yet sent
+//        node scripts/notify.mjs --due            prints {"pending":[slug],"undeployed":[slug]} for due, unsent posts; sends nothing
+// A post's `date` is an ISO timestamp (date-only means 00:00 UTC); it is due once that instant has passed.
 // Env: RESEND_API_KEY, CLOUDFLARE_API_TOKEN (D1 access), CLOUDFLARE_ACCOUNT_ID;
 // DRY_RUN=1 skips sending and recording; TEST_TO=addr sends only to that address, without touching the DB.
 import { execFileSync } from 'node:child_process';
@@ -14,7 +16,7 @@ const DRY = process.env.DRY_RUN === '1';
 const TEST_TO = process.env.TEST_TO;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const required = [...(DRY ? [] : ['RESEND_API_KEY']), ...(process.env.CI ? ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'] : [])];
+const required = [...(DRY || process.argv.includes('--due') ? [] : ['RESEND_API_KEY']), ...(process.env.CI ? ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'] : [])];
 for (const k of required) if (!process.env[k]) throw new Error(`Missing env ${k}`);
 
 const d1 = (sql) => {
@@ -42,11 +44,20 @@ function listDocs(dir = DOCS_DIR) {
 	);
 }
 
+const isLive = async (slug) => (await fetch(`${SITE}/${slug}/`, { redirect: 'follow' }).catch(() => null))?.ok === true;
+
+const isSent = (slug) => d1(`SELECT 1 AS x FROM sent_posts WHERE slug = ${sqlStr(slug)}`).length > 0;
+
+function dueAt(post) {
+	const ms = new Date(post.date).getTime();
+	if (Number.isNaN(ms)) throw new Error(`${post.slug}: invalid date "${post.date}"`);
+	return ms;
+}
+
 async function waitUntilLive(slug) {
 	const url = `${SITE}/${slug}/`;
 	for (let i = 0; i < 80; i++) {
-		const res = await fetch(url, { redirect: 'follow' }).catch(() => null);
-		if (res?.ok) return;
+		if (await isLive(slug)) return;
 		if (i === 0) console.log(`  waiting for ${url} to go live...`);
 		await sleep(15_000);
 	}
@@ -78,14 +89,28 @@ async function send(post, sub) {
 }
 
 const scan = process.argv.includes('--scan');
-const files = (scan ? listDocs() : process.argv.slice(2))
+const due = process.argv.includes('--due');
+const files = (scan || due ? listDocs() : process.argv.slice(2))
 	.filter((f) => f.startsWith(DOCS_DIR) && /\.mdx?$/.test(f) && !/\/index\.mdx?$/.test(f));
+
+if (due) {
+	const pending = [];
+	const undeployed = [];
+	for (const file of files) {
+		const post = readPost(file);
+		if (!post.date || post.draft || dueAt(post) > Date.now() || isSent(post.slug)) continue;
+		pending.push(post.slug);
+		if (!(await isLive(post.slug))) undeployed.push(post.slug);
+	}
+	console.log(JSON.stringify({ pending, undeployed }));
+	process.exit(0);
+}
+
 if (!files.length) {
 	console.log('No new posts.');
 	process.exit(0);
 }
 
-const today = new Date().toISOString().slice(0, 10);
 let failed = false;
 
 for (const file of files) {
@@ -96,7 +121,7 @@ for (const file of files) {
 		console.log(`${post.slug}: draft, skipping`);
 		continue;
 	}
-	if (post.date && post.date.slice(0, 10) > today) {
+	if (post.date && dueAt(post) > Date.now()) {
 		console.log(`${post.slug}: scheduled for ${post.date}, skipping`);
 		continue;
 	}
@@ -104,7 +129,7 @@ for (const file of files) {
 		console.log(`${post.slug}: test send to ${TEST_TO}`, await send(post, { email: TEST_TO, token: '0'.repeat(32) }));
 		continue;
 	}
-	if (d1(`SELECT 1 AS x FROM sent_posts WHERE slug = ${sqlStr(post.slug)}`).length) {
+	if (isSent(post.slug)) {
 		if (!scan) console.log(`${post.slug}: already sent, skipping`);
 		continue;
 	}

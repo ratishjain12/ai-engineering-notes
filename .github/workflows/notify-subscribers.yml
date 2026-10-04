@@ -7,7 +7,7 @@ on:
       - 'src/content/docs/**/*.md'
       - 'src/content/docs/**/*.mdx'
   schedule:
-    - cron: '0 6 * * *' # picks up posts whose date has arrived
+    - cron: '*/15 * * * *' # releases posts whose scheduled time has arrived
   workflow_dispatch:
 
 concurrency: notify-subscribers
@@ -28,18 +28,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # Only files *added* in a push count as new; edits to existing posts don't.
-      # Scheduled/manual runs scan every dated, published post not yet sent.
+      # Scheduled/manual runs look for posts whose time has come and that were not sent yet;
+      # `deploy` is true when one of them is not live on the site, i.e. it was hidden from the last build.
       - name: Find new posts
         id: new
         run: |
           if [ "${{ github.event_name }}" != "push" ]; then
-            echo "args=--scan" >> "$GITHUB_OUTPUT"
+            STATE=$(node scripts/notify.mjs --due)
+            echo "$STATE"
+            echo "args=$(echo "$STATE" | jq -r 'if (.pending | length) > 0 then "--scan" else "" end')" >> "$GITHUB_OUTPUT"
+            echo "deploy=$(echo "$STATE" | jq -r '(.undeployed | length) > 0')" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           BEFORE=${{ github.event.before }}
           if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then BEFORE=HEAD~1; fi
           FILES=$(git diff --diff-filter=A --name-only "$BEFORE" HEAD -- 'src/content/docs/**/*.md' 'src/content/docs/**/*.mdx' | tr '\n' ' ')
           echo "args=$FILES" >> "$GITHUB_OUTPUT"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy scheduled posts
+        if: steps.new.outputs.deploy == 'true'
+        run: pnpm build && pnpm exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Email subscribers
         if: steps.new.outputs.args != ''

@@ -3,8 +3,19 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
+import { existsSync, readFileSync } from 'node:fs';
 
 const site = 'https://learn.ratishfolio.com';
+
+// Drafts and future-dated posts are left out of the build, and Starlight fails on sidebar slugs without a page.
+const released = (slug) => {
+  const file = ['md', 'mdx'].map((ext) => new URL(`./src/content/docs/${slug}.${ext}`, import.meta.url)).find(existsSync);
+  if (!file) return false;
+  const fm = readFileSync(file, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] ?? '';
+  if (/^draft:\s*true\s*$/m.test(fm)) return false;
+  const date = fm.match(/^date:\s*["']?(.+?)["']?\s*$/m)?.[1];
+  return !date || new Date(date).getTime() <= Date.now();
+};
 
 export default defineConfig({
   site,
@@ -69,7 +80,7 @@ export default defineConfig({
           items: [
             { label: 'Day 01 · Attention', slug: 'llms/attention' },
             { label: 'Day 02 · KV Cache', slug: 'llms/kv-cache' },
-          ],
+          ].filter(({ slug }) => released(slug)),
         },
       ],
     }),

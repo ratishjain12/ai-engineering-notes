@@ -26,4 +26,4 @@ Merges are squashed, so the title becomes the commit message on main.
 - [ ] `description` is filled in (it is the email body and share card)
 - [ ] Every image has alt text; formula images start with `Formula:`
 - [ ] Sidebar entry and README topic row added
-- [ ] I'm ready to email subscribers: **merging this PR publishes the post and sends the email** (use `draft: true` to hold it back)
+- [ ] Release: **on merge** (merging publishes the post and emails subscribers) / **scheduled for** `<time IST>` (`<UTC>`), sent 0-30 min later (use `draft: true` to hold it back indefinitely)
