@@ -36,6 +36,15 @@
 	font-display: swap;
 	src: url('/fonts/newsreader-latin-wght-normal.woff2') format('woff2-variations');
 }
+/* Georgia resized to Newsreader's metrics, for the same reason. */
+@font-face {
+	font-family: 'Newsreader Fallback';
+	src: local('Georgia');
+	size-adjust: 96.12%;
+	ascent-override: 76.47%;
+	descent-override: 27.57%;
+	line-gap-override: 0%;
+}
 /* Arial resized to Plex's metrics, so text does not shift when the real font swaps in. */
 @font-face {
 	font-family: 'IBM Plex Sans Fallback';
@@ -48,7 +57,7 @@
 
 @theme {
 	--font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', system-ui, sans-serif;
-	--font-serif: 'Newsreader Variable', Georgia, serif;
+	--font-serif: 'Newsreader Variable', 'Newsreader Fallback', Georgia, serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
 	/* vermilion accent */
