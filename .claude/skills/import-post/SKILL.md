@@ -7,6 +7,8 @@ description: Import a Notion export (zip or folder with markdown and images) int
 
 Input: a path to a Notion export (zip, or an unzipped folder with one `.md` and its images). Optional: section (default `llms`), a release time (see Scheduling).
 
+**No path given:** use the newest export in `~/Downloads`: the most recently modified `Export-*.zip`, or folder containing a `.md` and images (`ls -t ~/Downloads`). Say which file you picked and its modified time before using it; if nothing from the last day matches, ask instead of guessing.
+
 ## Steps
 
 1. **Unzip and inspect.** Unzip to a temp dir, find the `.md`, list the images. Never leave the export inside the repo.
