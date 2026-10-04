@@ -14,6 +14,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | - | ----- | ----- |
 | 01 | [Attention](https://learn.ratishfolio.com/llms/attention/) | Q, K, V, softmax, self vs cross attention, causal and multi-head attention, engineering trade-offs |
 | 02 | [KV Cache](https://learn.ratishfolio.com/llms/kv-cache/) | Reusing Keys and Values to speed up inference, the GPU memory it costs, PagedAttention, GQA and MQA |
+| 03 | [Speculative Decoding](https://learn.ratishfolio.com/llms/speculative-decoding/) | A draft model proposes tokens, the target model verifies them in one pass, acceptance rate and when it pays off |
 
 ## Feedback
 
