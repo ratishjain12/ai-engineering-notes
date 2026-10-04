@@ -30,6 +30,10 @@ export default defineConfig({
         alt: 'AI Engineering Notes',
       },
       head: [
+        ...['ibm-plex-sans-latin-400-normal', 'newsreader-latin-wght-normal'].map((font) => ({
+          tag: 'link',
+          attrs: { rel: 'preload', as: 'font', type: 'font/woff2', href: `/fonts/${font}.woff2`, crossorigin: '' },
+        })),
         { tag: 'script', attrs: { src: '/pane-resize.js' } },
         { tag: 'script', attrs: { src: '/track.js', defer: true } },
         {
