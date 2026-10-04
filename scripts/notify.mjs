@@ -8,6 +8,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { renderEmail } from './email.mjs';
+import { indexNow } from './indexnow.mjs';
 
 const SITE = 'https://learn.ratishfolio.com';
 const FROM = 'AI Engineering Notes <learn@ratishfolio.com>';
@@ -142,6 +143,7 @@ for (const file of files) {
 	if (DRY) continue;
 
 	await waitUntilLive(post.slug);
+	await indexNow([`${SITE}/${post.slug}/`]).catch((e) => console.warn(`  ${e.message}`));
 
 	let ok = 0;
 	for (const sub of subs) {
