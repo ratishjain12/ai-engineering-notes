@@ -1,7 +1,7 @@
 ---
 title: Speculative Decoding
 description: How a small draft model proposes tokens and a large target model verifies them together, cutting the sequential steps of LLM generation.
-date: 2026-10-04T11:45:00Z
+date: 2026-10-05T06:30:00Z
 ---
 
 ## The problem
