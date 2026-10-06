@@ -1,0 +1,607 @@
+---
+const { entry } = Astro.locals.starlightRoute;
+const manifests = import.meta.glob('/src/content/docs/**/audio.json', { eager: true, import: 'default' });
+const audio = manifests[`/src/content/docs/${entry.id}-assets/audio.json`] as { duration: number } | undefined;
+const minutes = audio ? Math.max(1, Math.round(audio.duration / 60)) : 0;
+---
+
+{
+	audio && (
+		<>
+			<button type="button" class="listen-pill" data-listen="pill" data-state="idle" aria-label="Listen to this article">
+				<span class="listen-pill-icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24" class="i-play"><path d="M8 5.5v13a.5.5 0 0 0 .77.42l10-6.5a.5.5 0 0 0 0-.84l-10-6.5A.5.5 0 0 0 8 5.5Z" fill="currentColor" /></svg>
+					<svg viewBox="0 0 24 24" class="i-pause"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" /></svg>
+				</span>
+				<span data-listen="label">Listen</span>
+				<span class="listen-pill-meta">{minutes} min</span>
+			</button>
+
+			<div class="listen-bar" data-listen="bar" data-state="idle" role="region" aria-label="Article audio player" hidden>
+				<button type="button" class="listen-follow" data-listen="follow" hidden>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m0 0-6-6m6 6 6-6" /></svg>
+					Back to reading
+				</button>
+				<button type="button" class="lb-btn lb-skip" data-listen="back" aria-label="Back 15 seconds">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+					<span aria-hidden="true">15</span>
+				</button>
+				<button type="button" class="lb-play" data-listen="play" aria-label="Play">
+					<svg viewBox="0 0 24 24" class="i-play" aria-hidden="true"><path d="M8 5.5v13a.5.5 0 0 0 .77.42l10-6.5a.5.5 0 0 0 0-.84l-10-6.5A.5.5 0 0 0 8 5.5Z" fill="currentColor" /></svg>
+					<svg viewBox="0 0 24 24" class="i-pause" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" /></svg>
+				</button>
+				<button type="button" class="lb-btn lb-skip" data-listen="fwd" aria-label="Forward 15 seconds">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /></svg>
+					<span aria-hidden="true">15</span>
+				</button>
+				<span class="lb-time" data-listen="elapsed">0:00</span>
+				<input type="range" class="lb-scrub" data-listen="scrub" min="0" max={audio.duration} step="0.1" value="0" aria-label="Seek" />
+				<span class="lb-time" data-listen="total">0:00</span>
+				<button type="button" class="lb-rate" data-listen="rate" aria-label="Playback speed">1×</button>
+				<button type="button" class="lb-btn" data-listen="close" aria-label="Close player">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+				</button>
+			</div>
+
+			<script type="application/json" id="listen-data" set:html={JSON.stringify(audio)} />
+		</>
+	)
+}
+
+<script>
+	import { SPEECH_SELECTOR, blockText, blockTextNodes, fingerprint, speechBlocks } from '../lib/speech.js';
+
+	type Manifest = { url: string; duration: number; blocks: { h: string; s: [number, number, number, number][] }[] };
+
+	const data = document.getElementById('listen-data');
+	const pill = document.querySelector<HTMLElement>('[data-listen="pill"]');
+	if (data && pill) init(JSON.parse(data.textContent!) as Manifest, pill);
+
+	function init(m: Manifest, pill: HTMLElement) {
+		const $ = <T extends HTMLElement = HTMLElement>(n: string) => document.querySelector<T>(`[data-listen="${n}"]`)!;
+		const bar = $('bar');
+		const playBtn = $('play');
+		const scrub = $<HTMLInputElement>('scrub');
+		const elapsed = $('elapsed');
+		const total = $('total');
+		const rateBtn = $('rate');
+		const followBtn = $('follow');
+		const label = $('label');
+		const root = document.querySelector('.sl-markdown-content')!;
+		const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		const els = speechBlocks(root);
+		const aligned = els.length === m.blocks.length && els.every((el, i) => fingerprint(blockText(el)) === m.blocks[i].h);
+		if (!aligned) console.warn('[listen] page text differs from the narration, so highlighting is off. Regenerate the audio.');
+		const flat = aligned ? m.blocks.flatMap((b, bi) => b.s.map(([start, , a, e]) => ({ start, bi, a, e }))) : [];
+		const blockIndex = new Map<Element, number>(els.map((el, i) => [el, i]));
+		const canHighlight = aligned && 'highlights' in CSS && typeof Highlight !== 'undefined';
+
+		const RATES = [1, 1.25, 1.5, 1.75, 2, 0.75];
+		let rate = Number(localStorage.getItem('ain-listen-rate')) || 1;
+		let audio: HTMLAudioElement | null = null;
+		let state: 'idle' | 'playing' | 'paused' = 'idle';
+		let following = true;
+		let current = -1;
+		let activeBlock = -1;
+		let raf = 0;
+
+		const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+		const duration = () => (audio && isFinite(audio.duration) ? audio.duration : m.duration);
+		total.textContent = fmt(m.duration);
+		rateBtn.textContent = `${rate}×`;
+
+		function rangeFor(el: Element, a: number, e: number): Range | null {
+			const nodes = blockTextNodes(el) as Text[];
+			let raw = '';
+			const starts: number[] = [];
+			for (const n of nodes) {
+				starts.push(raw.length);
+				raw += n.data;
+			}
+			const map: number[] = [];
+			let prevSpace = true;
+			for (let i = 0; i < raw.length; i++) {
+				const space = /\s/.test(raw[i]);
+				if (space && prevSpace) continue;
+				map.push(i);
+				prevSpace = space;
+			}
+			const at = (pos: number, end: boolean): [Text, number] | null => {
+				for (let i = nodes.length - 1; i >= 0; i--) if (end ? pos > starts[i] : pos >= starts[i]) return [nodes[i], pos - starts[i]];
+				return null;
+			};
+			if (map[a] === undefined || map[e - 1] === undefined) return null;
+			const from = at(map[a], false);
+			const to = at(map[e - 1] + 1, true);
+			if (!from || !to) return null;
+			const range = document.createRange();
+			range.setStart(...from);
+			range.setEnd(...to);
+			return range;
+		}
+
+		function reveal(target: Range | Element) {
+			const r = target.getBoundingClientRect();
+			const top = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 80;
+			const bottom = innerHeight - bar.offsetHeight - 56;
+			if (r.top >= top && r.bottom <= bottom) return;
+			scrollTo({ top: scrollY + r.top - top - (bottom - top) * 0.2, behavior: reduceMotion ? 'auto' : 'smooth' });
+		}
+
+		function setActive(i: number) {
+			if (i === current) return;
+			current = i;
+			const s = flat[i];
+			const bi = s ? s.bi : -1;
+			if (bi !== activeBlock) {
+				els[activeBlock]?.classList.remove('listen-active');
+				activeBlock = bi;
+				els[bi]?.classList.add('listen-active');
+			}
+			const range = s && canHighlight ? rangeFor(els[s.bi], s.a, s.e) : null;
+			if (canHighlight) range ? CSS.highlights.set('listen-sentence', new Highlight(range)) : CSS.highlights.delete('listen-sentence');
+			if (s && following) reveal(range ?? els[s.bi]);
+		}
+
+		function indexAt(t: number) {
+			let lo = 0;
+			let hi = flat.length - 1;
+			let found = -1;
+			while (lo <= hi) {
+				const mid = (lo + hi) >> 1;
+				if (flat[mid].start <= t + 0.05) {
+					found = mid;
+					lo = mid + 1;
+				} else hi = mid - 1;
+			}
+			return found;
+		}
+
+		function sync() {
+			if (!audio) return;
+			const t = audio.currentTime;
+			elapsed.textContent = fmt(t);
+			scrub.value = String(t);
+			scrub.style.setProperty('--p', `${Math.min(100, (t / duration()) * 100)}%`);
+			if (flat.length) setActive(indexAt(t));
+		}
+
+		function clearHighlight() {
+			els[activeBlock]?.classList.remove('listen-active');
+			if (canHighlight) CSS.highlights.delete('listen-sentence');
+			activeBlock = -1;
+			current = -1;
+		}
+
+		function setState(next: typeof state) {
+			state = next;
+			pill.dataset.state = bar.dataset.state = next;
+			label.textContent = next === 'playing' ? 'Pause' : audio && audio.currentTime > 1 ? 'Resume' : 'Listen';
+			playBtn.setAttribute('aria-label', next === 'playing' ? 'Pause' : 'Play');
+			pill.setAttribute('aria-label', next === 'playing' ? 'Pause narration' : 'Listen to this article');
+			cancelAnimationFrame(raf);
+			if (next === 'playing') {
+				const loop = () => {
+					sync();
+					raf = requestAnimationFrame(loop);
+				};
+				loop();
+			}
+			if ('mediaSession' in navigator) navigator.mediaSession.playbackState = next === 'playing' ? 'playing' : 'paused';
+		}
+
+		function updateFollow() {
+			followBtn.hidden = following || bar.hidden;
+		}
+
+		function ensureAudio() {
+			if (audio) return audio;
+			const a = (audio = new Audio(m.url));
+			a.preload = 'auto';
+			a.playbackRate = rate;
+			a.addEventListener('play', () => setState('playing'));
+			a.addEventListener('pause', () => setState('paused'));
+			a.addEventListener('ended', () => {
+				clearHighlight();
+				sync();
+			});
+			a.addEventListener('waiting', () => bar.classList.add('is-loading'));
+			a.addEventListener('playing', () => bar.classList.remove('is-loading'));
+			a.addEventListener('seeked', sync);
+			a.addEventListener('timeupdate', sync);
+			a.addEventListener('loadedmetadata', () => {
+				scrub.max = String(a.duration);
+				total.textContent = fmt(a.duration);
+			});
+			if ('mediaSession' in navigator) {
+				navigator.mediaSession.metadata = new MediaMetadata({ title: document.title.split(' | ')[0], artist: 'AI Engineering Notes' });
+				const ms = navigator.mediaSession;
+				ms.setActionHandler('play', () => void a.play());
+				ms.setActionHandler('pause', () => a.pause());
+				ms.setActionHandler('seekbackward', () => skip(-15));
+				ms.setActionHandler('seekforward', () => skip(15));
+				ms.setActionHandler('seekto', (d) => {
+					if (d.seekTime != null) a.currentTime = d.seekTime;
+				});
+			}
+			return a;
+		}
+
+		function skip(by: number) {
+			const a = ensureAudio();
+			a.currentTime = Math.max(0, Math.min(duration(), a.currentTime + by));
+		}
+
+		function play() {
+			const a = ensureAudio();
+			bar.hidden = false;
+			document.body.classList.add('listen-open');
+			if (a.ended) a.currentTime = 0;
+			following = true;
+			current = -2;
+			updateFollow();
+			return a.play().catch(() => {});
+		}
+
+		function toggle() {
+			if (state === 'playing') audio!.pause();
+			else void play();
+		}
+
+		function close() {
+			audio?.pause();
+			bar.hidden = true;
+			document.body.classList.remove('listen-open');
+			clearHighlight();
+			setState('paused');
+			if (audio && audio.currentTime <= 1) setState('idle');
+		}
+
+		pill.addEventListener('click', toggle);
+		playBtn.addEventListener('click', toggle);
+		$('back').addEventListener('click', () => skip(-15));
+		$('fwd').addEventListener('click', () => skip(15));
+		$('close').addEventListener('click', close);
+		followBtn.addEventListener('click', () => {
+			following = true;
+			current = -2;
+			updateFollow();
+			sync();
+		});
+		scrub.addEventListener('input', () => {
+			ensureAudio().currentTime = Number(scrub.value);
+			sync();
+		});
+		rateBtn.addEventListener('click', () => {
+			rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length];
+			rateBtn.textContent = `${rate}×`;
+			localStorage.setItem('ain-listen-rate', String(rate));
+			if (audio) audio.playbackRate = rate;
+		});
+
+		// Only real user input pauses auto-scroll; programmatic scrolling never fires these.
+		const unfollow = () => {
+			if (state !== 'playing' || !following) return;
+			following = false;
+			updateFollow();
+		};
+		addEventListener('wheel', unfollow, { passive: true });
+		addEventListener('touchmove', unfollow, { passive: true });
+		addEventListener('keydown', (e) => {
+			if (e.target === document.body && ['PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' '].includes(e.key)) unfollow();
+		});
+
+		root.addEventListener('click', (e) => {
+			if (bar.hidden || !aligned || !getSelection()?.isCollapsed) return;
+			const target = e.target as Element;
+			if (target.closest('a,button,summary,input,pre,figure')) return;
+			const el = target.closest(SPEECH_SELECTOR);
+			const bi = el ? blockIndex.get(el) : undefined;
+			if (bi === undefined) return;
+			ensureAudio().currentTime = m.blocks[bi].s[0][0];
+			void play();
+		});
+	}
+</script>
+
+<style is:global>
+	:root {
+		--listen-block: rgb(191 52 16 / 0.07);
+		--listen-sentence: rgb(240 76 30 / 0.22);
+	}
+	:root[data-theme='dark'] {
+		--listen-block: rgb(255 111 64 / 0.09);
+		--listen-sentence: rgb(255 111 64 / 0.3);
+	}
+
+	.listen-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-top: 1rem;
+		padding: 0.4rem 1rem 0.4rem 0.4rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sl-color-white);
+		font: 500 0.875rem/1 var(--font-sans);
+		cursor: pointer;
+		transition: border-color 0.15s, background-color 0.15s, transform 0.1s;
+	}
+	.listen-pill:hover {
+		border-color: var(--brand-solid);
+		background: var(--listen-block);
+	}
+	.listen-pill:active {
+		transform: scale(0.97);
+	}
+	.listen-pill-icon {
+		display: grid;
+		place-items: center;
+		width: 1.9rem;
+		height: 1.9rem;
+		border-radius: 50%;
+		background: var(--brand-solid);
+		color: var(--on-solid);
+	}
+	.listen-pill-icon svg {
+		width: 1rem;
+		height: 1rem;
+		grid-area: 1 / 1;
+	}
+	.listen-pill-meta {
+		color: var(--sl-color-gray-3);
+		font-weight: 400;
+		font-variant-numeric: tabular-nums;
+	}
+	.listen-pill-meta::before {
+		content: '·';
+		margin-right: 0.6rem;
+	}
+
+	[data-state='playing'] .i-play,
+	[data-state] .i-pause {
+		display: none;
+	}
+	[data-state='playing'] .i-pause {
+		display: block;
+	}
+
+	.listen-bar {
+		position: fixed;
+		left: 50%;
+		bottom: max(1rem, env(safe-area-inset-bottom));
+		z-index: 20;
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		width: min(40rem, calc(100vw - 1.25rem));
+		padding: 0.5rem 0.6rem 0.5rem 0.5rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 1.25rem;
+		background: color-mix(in srgb, var(--sl-color-bg) 84%, transparent);
+		-webkit-backdrop-filter: blur(16px) saturate(1.3);
+		backdrop-filter: blur(16px) saturate(1.3);
+		box-shadow: 0 12px 40px -12px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.08);
+		transform: translateX(-50%);
+		animation: listen-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.listen-bar[hidden],
+	.listen-follow[hidden] {
+		display: none;
+	}
+	@keyframes listen-in {
+		from {
+			opacity: 0;
+			transform: translate(-50%, 1rem) scale(0.98);
+		}
+	}
+	body.listen-open {
+		padding-bottom: 6rem;
+	}
+
+	.lb-play {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 0;
+		border-radius: 50%;
+		background: var(--brand-solid);
+		color: var(--on-solid);
+		cursor: pointer;
+		transition: background-color 0.15s, transform 0.1s;
+	}
+	.lb-play:hover {
+		background: var(--brand-solid-hover);
+	}
+	.lb-play:active {
+		transform: scale(0.94);
+	}
+	.lb-play svg {
+		width: 1.35rem;
+		height: 1.35rem;
+	}
+	.is-loading .lb-play {
+		animation: listen-pulse 1s ease-in-out infinite;
+	}
+	@keyframes listen-pulse {
+		50% {
+			opacity: 0.55;
+		}
+	}
+
+	.lb-btn {
+		position: relative;
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 2.25rem;
+		height: 2.25rem;
+		border: 0;
+		border-radius: 50%;
+		background: transparent;
+		color: var(--sl-color-gray-2);
+		cursor: pointer;
+		transition: background-color 0.15s, color 0.15s;
+	}
+	.lb-btn:hover {
+		background: color-mix(in srgb, var(--sl-color-white) 10%, transparent);
+		color: var(--sl-color-white);
+	}
+	.lb-btn svg {
+		width: 1.4rem;
+		height: 1.4rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.lb-skip span {
+		position: absolute;
+		font: 700 0.5rem/1 var(--font-mono);
+		letter-spacing: -0.04em;
+		padding-top: 0.12rem;
+	}
+
+	.lb-time {
+		flex: none;
+		min-width: 2.2rem;
+		color: var(--sl-color-gray-3);
+		font: 400 0.72rem/1 var(--font-mono);
+		font-variant-numeric: tabular-nums;
+		text-align: center;
+	}
+
+	.lb-scrub {
+		--p: 0%;
+		flex: 1;
+		min-width: 0;
+		height: 1.5rem;
+		margin: 0 0.25rem;
+		background: transparent;
+		-webkit-appearance: none;
+		appearance: none;
+		cursor: pointer;
+	}
+	.lb-scrub::-webkit-slider-runnable-track {
+		height: 0.3rem;
+		border-radius: 999px;
+		background: linear-gradient(to right, var(--brand-solid) var(--p), color-mix(in srgb, var(--sl-color-white) 16%, transparent) var(--p));
+	}
+	.lb-scrub::-moz-range-track {
+		height: 0.3rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--sl-color-white) 16%, transparent);
+	}
+	.lb-scrub::-moz-range-progress {
+		height: 0.3rem;
+		border-radius: 999px;
+		background: var(--brand-solid);
+	}
+	.lb-scrub::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 0.85rem;
+		height: 0.85rem;
+		margin-top: -0.275rem;
+		border: 0;
+		border-radius: 50%;
+		background: var(--brand-solid);
+		transition: transform 0.15s;
+	}
+	.lb-scrub::-moz-range-thumb {
+		width: 0.85rem;
+		height: 0.85rem;
+		border: 0;
+		border-radius: 50%;
+		background: var(--brand-solid);
+	}
+	.lb-scrub:hover::-webkit-slider-thumb,
+	.lb-scrub:focus-visible::-webkit-slider-thumb {
+		transform: scale(1.25);
+	}
+
+	.lb-rate {
+		flex: none;
+		min-width: 3rem;
+		padding: 0.4rem 0.5rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
+		background: transparent;
+		color: var(--sl-color-gray-2);
+		font: 500 0.75rem/1 var(--font-mono);
+		cursor: pointer;
+		transition: border-color 0.15s, color 0.15s;
+	}
+	.lb-rate:hover {
+		border-color: var(--brand-solid);
+		color: var(--sl-color-white);
+	}
+
+	.listen-follow {
+		position: absolute;
+		bottom: calc(100% + 0.65rem);
+		left: 50%;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.5rem 0.9rem 0.5rem 0.7rem;
+		border: 0;
+		border-radius: 999px;
+		background: var(--brand-solid);
+		color: var(--on-solid);
+		font: 500 0.8rem/1 var(--font-sans);
+		white-space: nowrap;
+		box-shadow: 0 6px 20px -6px rgb(0 0 0 / 0.4);
+		transform: translateX(-50%);
+		cursor: pointer;
+		animation: listen-chip 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.listen-follow svg {
+		width: 1rem;
+		height: 1rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	@keyframes listen-chip {
+		from {
+			opacity: 0;
+			transform: translate(-50%, 0.5rem);
+		}
+	}
+
+	@media (max-width: 40rem) {
+		.lb-skip,
+		.lb-time {
+			display: none;
+		}
+	}
+
+	body.listen-open .sl-markdown-content :is(h2, h3, h4, h5, h6, p, li, th, td) {
+		border-radius: 0.3rem;
+		transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	}
+	.sl-markdown-content .listen-active {
+		background-color: var(--listen-block);
+		box-shadow: 0 0 0 0.4rem var(--listen-block);
+	}
+	.sl-markdown-content :is(th, td).listen-active {
+		box-shadow: none;
+	}
+	.sl-markdown-content .expressive-code.listen-active {
+		background-color: transparent;
+		box-shadow: 0 0 0 2px var(--listen-sentence);
+	}
+	::highlight(listen-sentence) {
+		background-color: rgb(240 76 30 / 0.22);
+	}
+	:root[data-theme='dark'] ::highlight(listen-sentence) {
+		background-color: rgb(255 111 64 / 0.3);
+	}
+</style>

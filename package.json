@@ -29,5 +29,8 @@
     "tailwindcss": "^4.3.3",
     "wrangler": "^4.144.0"
   },
-  "packageManager": "pnpm@11.2.2"
+  "packageManager": "pnpm@11.2.2",
+  "devDependencies": {
+    "linkedom": "^0.18.13"
+  }
 }
