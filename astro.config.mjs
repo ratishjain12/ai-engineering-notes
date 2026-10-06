@@ -76,7 +76,7 @@ export default defineConfig({
         { icon: 'x.com', label: 'X', href: 'https://x.com/ratishtwts' },
         { icon: 'github', label: 'GitHub', href: 'https://github.com/ratishjain12/ai-engineering-notes' },
       ],
-      components: { Footer: './src/components/Footer.astro' },
+      components: { Footer: './src/components/Footer.astro', PageTitle: './src/components/PageTitle.astro' },
       customCss: ['./src/styles/global.css'],
       sidebar: [
         {

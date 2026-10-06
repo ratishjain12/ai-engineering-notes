@@ -37,9 +37,10 @@ Input: a path to a Notion export (zip, or an unzipped folder with one `.md` and 
 7. **Sidebar:** add `{ label: 'Day NN · <Title>', slug: '<section>/<slug>' }` under the section in `astro.config.mjs`.
 8. **README:** add the row to the Topics table, matching the existing rows.
 9. **Verify:** run `pnpm build`; it must pass. Spot-check one built page under `dist/client/<section>/<slug>/index.html` for the images and sidebar label.
-10. **Branch and PR.** Never commit to `main` directly.
+10. **Narration (optional, costs ~$0.03):** if the user wants audio, run `node --env-file=.env scripts/tts.mjs src/content/docs/<section>/<slug>.md`. It reads the built page (`dist/client/...`; for a future-dated post, which the build skips, start `astro dev --background` and it falls back to `localhost:4321`), uploads the mp3 to R2 and writes `<slug>-assets/audio.json`, which makes the Listen player appear. Use `--dry` first to see what gets read. Re-run `pnpm build` afterwards. If the post text changes later, re-run it; the page disables highlighting (audio still plays) when the text no longer matches `audio.json`.
+11. **Branch and PR.** Never commit to `main` directly.
     - `git checkout -b post/<slug>` from an up-to-date `main`.
-    - Commit the post, its assets, the sidebar and README changes: `Add <Title> post`.
+    - Commit the post, its assets (including `audio.json`), the sidebar and README changes: `Add <Title> post`.
     - `git push -u origin post/<slug>`, then `gh pr create --base main`.
     - Title: `Add <Title> post`. Body follows `.github/pull_request_template.md`:
       - **Summary**: the post's one-line description.
