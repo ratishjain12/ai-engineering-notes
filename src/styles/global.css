@@ -278,3 +278,66 @@ body:has(#landing) {
 		padding-top: 3rem;
 	}
 }
+
+/* Sidebar: eyebrow group titles, soft rounded items, tinted active state with an accent bar. */
+.sidebar-content summary {
+	padding: 0.35rem 0.75rem;
+	border-radius: 0.5rem;
+	transition: background-color 0.15s;
+}
+.sidebar-content summary:hover {
+	background: color-mix(in srgb, var(--sl-color-white) 6%, transparent);
+}
+.sidebar-content summary .large {
+	font: 600 0.7rem/1.2 var(--font-mono);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+	transition: color 0.15s;
+}
+.sidebar-content summary:hover .large {
+	color: var(--sl-color-white);
+}
+.sidebar-content .caret {
+	width: 1rem;
+	height: 1rem;
+	color: var(--sl-color-gray-3);
+}
+
+.sidebar-content ul ul {
+	display: grid;
+	gap: 2px;
+	margin-top: 0.4rem;
+}
+.sidebar-content ul ul li {
+	margin-inline-start: 0;
+	border-inline-start: 0;
+	padding-inline-start: 0;
+}
+.sidebar-content ul ul a {
+	position: relative;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+	font-size: 0.875rem;
+	line-height: 1.35;
+	transition: background-color 0.15s, color 0.15s;
+}
+.sidebar-content ul ul a:hover,
+.sidebar-content ul ul a:focus-visible {
+	background: color-mix(in srgb, var(--sl-color-white) 6%, transparent);
+	color: var(--sl-color-white);
+}
+.sidebar-content ul ul a[aria-current='page'],
+.sidebar-content ul ul a[aria-current='page']:hover {
+	background: color-mix(in srgb, var(--brand-solid) 13%, transparent);
+	color: var(--brand-text);
+	font-weight: 600;
+}
+.sidebar-content ul ul a[aria-current='page']::before {
+	content: '';
+	position: absolute;
+	inset: 0.55rem auto 0.55rem 0;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
+	background: var(--brand-solid);
+}
