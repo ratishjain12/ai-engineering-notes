@@ -1,0 +1,9 @@
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "learn-ai-scheduler",
+	"main": "index.js",
+	"compatibility_date": "2026-09-26",
+	"triggers": { "crons": ["*/15 * * * *"] },
+	"vars": { "GITHUB_REPO": "ratishjain12/ai-engineering-notes" },
+	"observability": { "enabled": true }
+}
