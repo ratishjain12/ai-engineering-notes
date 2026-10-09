@@ -86,6 +86,7 @@ export default defineConfig({
             { label: 'Day 02 · KV Cache', slug: 'llms/kv-cache' },
             { label: 'Day 03 · Speculative Decoding', slug: 'llms/speculative-decoding' },
             { label: 'Day 04 · Quantization', slug: 'llms/quantization' },
+            { label: 'Day 05 · Fine Tuning', slug: 'llms/fine-tuning' },
           ].filter(({ slug }) => released(slug)),
         },
       ],
