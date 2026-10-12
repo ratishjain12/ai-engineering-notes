@@ -17,6 +17,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | 03 | [Speculative Decoding](https://learn.ratishfolio.com/llms/speculative-decoding/) | A draft model proposes tokens, the target model verifies them in one pass, acceptance rate and when it pays off |
 | 04 | [Quantization](https://learn.ratishfolio.com/llms/quantization/) | Storing weights in fewer bits, scale and zero point, PTQ vs QAT, GPTQ, AWQ and SmoothQuant, and the effect on inference and the KV cache |
 | 05 | [Fine Tuning](https://learn.ratishfolio.com/llms/fine-tuning/) | Updating a pretrained model's weights on a task dataset, full fine-tuning vs PEFT vs SFT, LoRA and QLoRA, and when to pick fine-tuning over prompting or RAG |
+| 06 | [Mixture of Experts](https://learn.ratishfolio.com/llms/mixture-of-experts/) | Routing tokens to a subset of experts per layer, top-k routing, active vs total parameters, load balancing and the serving complexity it adds |
 
 ## Feedback
 

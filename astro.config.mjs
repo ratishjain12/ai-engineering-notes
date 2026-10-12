@@ -87,6 +87,7 @@ export default defineConfig({
             { label: 'Day 03 · Speculative Decoding', slug: 'llms/speculative-decoding' },
             { label: 'Day 04 · Quantization', slug: 'llms/quantization' },
             { label: 'Day 05 · Fine Tuning', slug: 'llms/fine-tuning' },
+            { label: 'Day 06 · Mixture of Experts', slug: 'llms/mixture-of-experts' },
           ].filter(({ slug }) => released(slug)),
         },
       ],
