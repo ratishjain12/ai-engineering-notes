@@ -79,6 +79,7 @@ export default defineConfig({
       components: { Footer: './src/components/Footer.astro', PageTitle: './src/components/PageTitle.astro' },
       customCss: ['./src/styles/global.css'],
       sidebar: [
+        { label: 'Quick Start', items: [{ label: 'Star, Fork & Clone', slug: 'quick-start' }] },
         {
           label: 'Large Language Models',
           items: [
