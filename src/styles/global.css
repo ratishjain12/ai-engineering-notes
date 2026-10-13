@@ -341,3 +341,19 @@ body:has(#landing) {
 	border-radius: 0 3px 3px 0;
 	background: var(--brand-solid);
 }
+
+.sl-markdown-content a.cta {
+	display: inline-block;
+	margin-inline-start: 0.6rem;
+	padding: 0.3rem 0.75rem;
+	border-radius: 999px;
+	background: var(--brand-solid);
+	color: var(--on-solid);
+	font: 600 0.8rem/1.2 var(--sl-font);
+	text-decoration: none;
+	vertical-align: middle;
+	transition: background-color 0.15s;
+}
+.sl-markdown-content a.cta:hover {
+	background: var(--brand-solid-hover);
+}

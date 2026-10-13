@@ -3,7 +3,7 @@ import Default from '@astrojs/starlight/components/Footer.astro';
 import Engagement from './Engagement.astro';
 
 const { entry } = Astro.locals.starlightRoute;
-const showEngagement = Astro.url.pathname !== '/' && entry.id !== '404';
+const showEngagement = Astro.url.pathname !== '/' && !['404', 'quick-start'].includes(entry.id);
 ---
 
 {showEngagement && <Engagement />}
