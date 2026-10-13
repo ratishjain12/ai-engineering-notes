@@ -18,6 +18,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | 04 | [Quantization](https://learn.ratishfolio.com/llms/quantization/) | Storing weights in fewer bits, scale and zero point, PTQ vs QAT, GPTQ, AWQ and SmoothQuant, and the effect on inference and the KV cache |
 | 05 | [Fine Tuning](https://learn.ratishfolio.com/llms/fine-tuning/) | Updating a pretrained model's weights on a task dataset, full fine-tuning vs PEFT vs SFT, LoRA and QLoRA, and when to pick fine-tuning over prompting or RAG |
 | 06 | [Mixture of Experts](https://learn.ratishfolio.com/llms/mixture-of-experts/) | Routing tokens to a subset of experts per layer, top-k routing, active vs total parameters, load balancing and the serving complexity it adds |
+| 07 | [Agent Loop](https://learn.ratishfolio.com/agents/agent-loop/) | The loop that sends context to a model, executes the tool it requests, and feeds the result back until the model returns a final answer |
 
 ## Feedback
 

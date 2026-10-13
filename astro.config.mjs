@@ -91,6 +91,10 @@ export default defineConfig({
             { label: 'Day 06 · Mixture of Experts', slug: 'llms/mixture-of-experts' },
           ].filter(({ slug }) => released(slug)),
         },
+        {
+          label: 'Agents',
+          items: [{ label: 'Day 07 · Agent Loop', slug: 'agents/agent-loop' }].filter(({ slug }) => released(slug)),
+        },
       ],
     }),
   ],
