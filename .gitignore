@@ -12,6 +12,10 @@ node_modules/
 .wrangler/
 .dev.vars*
 
+# python
+.venv/
+__pycache__/
+
 # environment variables
 .env
 .env.*
