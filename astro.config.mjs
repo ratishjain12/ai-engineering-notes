@@ -93,7 +93,10 @@ export default defineConfig({
         },
         {
           label: 'Agents',
-          items: [{ label: 'Day 07 · Agent Loop', slug: 'agents/agent-loop' }].filter(({ slug }) => released(slug)),
+          items: [
+            { label: 'Day 07 · Agent Loop', slug: 'agents/agent-loop' },
+            { label: 'Day 08 · Tool Calling', slug: 'agents/tool-calling' },
+          ].filter(({ slug }) => released(slug)),
         },
       ],
     }),
