@@ -28,6 +28,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | - | ----- | ----- |
 | 07 | [Agent Loop](https://learn.ratishfolio.com/agents/agent-loop/) | The loop that sends context to a model, executes the tool it requests, and feeds the result back until the model returns a final answer |
 | 08 | [Tool Calling](https://learn.ratishfolio.com/agents/tool-calling/) | How a model requests a function and your application executes it, tool definitions, mapping names to functions, multiple tool calls and the failure cases to handle |
+| 09 | [Context Engineering](https://learn.ratishfolio.com/agents/context-engineering/) | What goes into the context, why not to send everything, building a context builder, summarization, retrieval and structured state, and common mistakes |
 
 ## Feedback
 

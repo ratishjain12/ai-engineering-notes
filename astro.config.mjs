@@ -96,6 +96,7 @@ export default defineConfig({
           items: [
             { label: 'Day 07 · Agent Loop', slug: 'agents/agent-loop' },
             { label: 'Day 08 · Tool Calling', slug: 'agents/tool-calling' },
+            { label: 'Day 09 · Context Engineering', slug: 'agents/context-engineering' },
           ].filter(({ slug }) => released(slug)),
         },
       ],
