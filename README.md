@@ -30,6 +30,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | 08 | [Tool Calling](https://learn.ratishfolio.com/agents/tool-calling/) | How a model requests a function and your application executes it, tool definitions, mapping names to functions, multiple tool calls and the failure cases to handle |
 | 09 | [Context Engineering](https://learn.ratishfolio.com/agents/context-engineering/) | What goes into the context, why not to send everything, building a context builder, summarization, retrieval and structured state, and common mistakes |
 | 10 | [Agent Memory](https://learn.ratishfolio.com/agents/agent-memory/) | Why agents need memory, context vs memory, short-term, long-term, episodic and semantic memory, and the extract, store, retrieve, update and forget lifecycle |
+| 11 | [Planning and Task Decomposition](https://learn.ratishfolio.com/agents/planning-and-task-decomposition/) | Why agents need plans, breaking a goal into tasks, dependencies and status, planning vs execution, static vs dynamic plans, and replanning when a task fails |
 
 ## Feedback
 
