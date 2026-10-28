@@ -99,6 +99,7 @@ export default defineConfig({
             { label: 'Day 09 · Context Engineering', slug: 'agents/context-engineering' },
             { label: 'Day 10 · Agent Memory', slug: 'agents/agent-memory' },
             { label: 'Day 11 · Planning and Task Decomposition', slug: 'agents/planning-and-task-decomposition' },
+            { label: 'Day 12 · Model Context Protocol', slug: 'agents/model-context-protocol' },
           ].filter(({ slug }) => released(slug)),
         },
       ],
