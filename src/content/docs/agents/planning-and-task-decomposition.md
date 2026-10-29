@@ -2,6 +2,7 @@
 title: Planning and Task Decomposition
 description: How agents break a goal into tasks with dependencies and status, execute them in order, verify results, and replan when a task fails.
 date: 2026-10-26T06:30:00Z
+related: [agents/agent-loop, agents/agent-memory, agents/tool-calling]
 ---
 
 ## Why Do Agents Need Planning?
@@ -93,7 +94,7 @@ If the tool fails, the agent should not mark the task as completed.
 
 ![The planning cycle: understand the goal, create a plan, execute a task, check the result, then continue or replan.](./planning-and-task-decomposition-assets/planning-execution-cycle.png)
 
-This cycle connects planning to the agent loop you studied earlier.
+This cycle connects planning to the [agent loop](/agents/agent-loop/) you studied earlier.
 
 ## Static Plans vs. Dynamic Plans
 

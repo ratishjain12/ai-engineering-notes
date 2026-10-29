@@ -2,6 +2,7 @@
 title: Model Context Protocol
 description: What MCP is, how hosts, clients and servers work together, how tools are discovered and called, and when to use it instead of plain function calling.
 date: 2026-10-29T06:30:00Z
+related: [agents/tool-calling, agents/agent-loop, agents/context-engineering]
 ---
 
 ## The problem MCP solves
@@ -38,7 +39,7 @@ The model does not directly communicate with the MCP server. The AI application 
 
 ## The key distinction
 
-| Function calling | MCP |
+| [Function calling](/agents/tool-calling/) | MCP |
 | --- | --- |
 | Defines how a model requests a function call | Defines how an application communicates with external capabilities |
 | Uses tool schemas provided to the model | Provides a standard way to discover and call server capabilities |

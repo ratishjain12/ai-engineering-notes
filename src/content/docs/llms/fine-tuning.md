@@ -2,6 +2,7 @@
 title: Fine Tuning
 description: Updating a pretrained model's weights on a task-specific dataset to change its behavior, and when that beats prompting or RAG.
 date: 2026-10-09T10:04:00Z
+related: [llms/quantization, llms/mixture-of-experts, agents/context-engineering]
 ---
 
 Fine-tuning is a method to change how a pretrained model behaves by training it on a specific dataset.
@@ -105,7 +106,7 @@ Benefits:
 
 ### QLoRA (Quantized Low-Rank Adaptation)
 
-QLoRA combines a quantized base model with LoRA adapters.
+QLoRA combines a [quantized](/llms/quantization/) base model with LoRA adapters.
 
 The base model uses lower-precision representations to reduce memory use. The LoRA parameters are trained while the base model weights remain frozen.
 

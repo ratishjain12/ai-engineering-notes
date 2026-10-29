@@ -1,0 +1,36 @@
+---
+import { getEntry } from 'astro:content';
+import { sectionTitles } from '../lib/sections';
+
+const { entry } = Astro.locals.starlightRoute;
+const section = entry.id.split('/')[0];
+const isPost = entry.id.includes('/') && section in sectionTitles;
+const related = isPost
+	? (await Promise.all((entry.data.related ?? []).map((id) => getEntry('docs', id)))).filter((e) => e !== undefined)
+	: [];
+---
+
+{
+	isPost && (
+		<nav aria-label="Related notes" class="not-content mt-10 grid gap-4 border-t border-line pt-8 text-fg-muted">
+			{related.length > 0 && (
+				<>
+					<h2 class="m-0 font-serif text-2xl font-medium text-fg">Keep reading</h2>
+					<ul class="m-0 grid list-none gap-3 p-0">
+						{related.map((post) => (
+							<li>
+								<a href={`/${post.id}/`} class="font-medium text-brand-text">
+									{post.data.title}
+								</a>
+								<span class="block text-sm leading-relaxed">{post.data.description}</span>
+							</li>
+						))}
+					</ul>
+				</>
+			)}
+			<p class="m-0 text-sm">
+				All notes on <a href={`/${section}/`} class="text-brand-text">{sectionTitles[section]}</a>
+			</p>
+		</nav>
+	)
+}

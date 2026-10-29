@@ -2,6 +2,7 @@
 title: Attention
 description: How a token decides which other tokens matter, from Q, K, V to multi-head attention.
 date: 2026-09-30
+related: [llms/kv-cache, llms/speculative-decoding, llms/mixture-of-experts]
 ---
 
 ## What Problem Does Attention Solve?
@@ -131,7 +132,7 @@ Throughput is how much work the system can handle over time. Attention consumes 
 
 Attention has an important memory requirement. The attention scores are `QKᵀ`, so in the straightforward implementation the attention matrix takes **O(n²) memory**.
 
-Optimized approaches such as **FlashAttention** reduce the memory overhead.
+Optimized approaches such as **FlashAttention** reduce the memory overhead. During generation, the [KV Cache](/llms/kv-cache/) stores earlier Keys and Values so they are not recomputed, at the cost of more GPU memory.
 
 ### Cost
 

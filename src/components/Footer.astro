@@ -1,10 +1,13 @@
 ---
 import Default from '@astrojs/starlight/components/Footer.astro';
 import Engagement from './Engagement.astro';
+import RelatedPosts from './RelatedPosts.astro';
+import { sectionTitles } from '../lib/sections';
 
 const { entry } = Astro.locals.starlightRoute;
-const showEngagement = Astro.url.pathname !== '/' && !['404', 'quick-start'].includes(entry.id);
+const showEngagement = Astro.url.pathname !== '/' && !['404', 'quick-start', ...Object.keys(sectionTitles)].includes(entry.id);
 ---
 
 {showEngagement && <Engagement />}
+<RelatedPosts />
 <Default><slot /></Default>

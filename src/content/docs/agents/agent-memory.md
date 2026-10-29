@@ -2,6 +2,7 @@
 title: Agent Memory
 description: How agents store, retrieve, update and forget information across conversations, and how short-term, long-term, episodic and semantic memory fit with context engineering.
 date: 2026-10-23T07:10:00Z
+related: [agents/context-engineering, agents/planning-and-task-decomposition, agents/agent-loop]
 ---
 
 An AI agent receives information from the current conversation. It uses this information to decide what to do next.
@@ -65,7 +66,7 @@ For example:
 4. The agent adds it to the current context.
 5. The model uses it to answer the request.
 
-This connects directly to the previous topic, Context Engineering.
+This connects directly to the previous topic, [Context Engineering](/agents/context-engineering/).
 
 Memory does not automatically become context.
 

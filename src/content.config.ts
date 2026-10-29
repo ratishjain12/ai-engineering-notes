@@ -20,6 +20,6 @@ const scheduledLoader: typeof base = {
 export const collections = {
 	docs: defineCollection({
 		loader: scheduledLoader,
-		schema: docsSchema({ extend: z.object({ date: z.coerce.date().optional() }) }),
+		schema: docsSchema({ extend: z.object({ date: z.coerce.date().optional(), related: z.array(z.string()).optional() }) }),
 	}),
 };

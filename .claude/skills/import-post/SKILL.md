@@ -21,15 +21,17 @@ Input: a path to a Notion export (zip, or an unzipped folder with one `.md` and 
    title: <Title>
    description: <one sentence, plain, no hype; ask the user if the export gives nothing to base it on>
    date: <UTC timestamp, e.g. 2026-10-05T06:30:00Z; today's date if no release time was given>
+   related: [<section>/<slug>, <section>/<slug>]
    ---
    ```
-   `description` is mandatory: it is the email body and the social card text. `date` is the release instant (see Scheduling).
+   `description` is mandatory: it is the email body and the social card text. `date` is the release instant (see Scheduling). `related` lists up to three existing post ids (`llms/kv-cache`) shown under "Keep reading"; pick the closest topics, and add the new post to the `related` of those posts that should point back to it.
 4. **Clean the Markdown from Notion.**
    - Remove the leading H1 (Starlight renders the title) and Notion property lines (`Created:`, `Tags:`, etc.).
    - Body headings start at `##`; never skip levels.
    - Decode URL-encoded paths; replace `notion.so` links with plain text unless they point to a public page.
    - Turn callouts into blockquotes, toggles into headings or plain paragraphs, and keep code fences with their language.
    - Do not rewrite the author's wording. Only fix structure, not prose.
+   - Link the first mention of another post's topic to it with an absolute path (`[KV Cache](/llms/kv-cache/)`), wrapping the author's existing words; do the same in older posts that mention the new topic. The section hub (`/<section>/`) lists new posts on its own.
 5. **Move images** to `src/content/docs/<section>/<slug>-assets/`.
    - Rename to descriptive kebab-case (`query-key-matches.png`, not `Untitled_-_Visual_4.png`).
    - Reference as `./<slug>-assets/<name>.png`.
