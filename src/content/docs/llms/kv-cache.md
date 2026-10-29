@@ -2,6 +2,7 @@
 title: KV Cache
 description: How KV Cache speeds up LLM inference by reusing Keys and Values, the GPU memory it costs, and how PagedAttention, GQA and MQA tame it.
 date: 2026-10-02
+related: [llms/attention, llms/quantization, llms/speculative-decoding]
 ---
 
 ## Why KV Cache exists
@@ -146,7 +147,7 @@ Instead of completely removing information, compression techniques try to repres
 
 Different approaches can reduce memory through techniques such as:
 
-- storing K/V representations at lower precision (Quantized KV)
+- storing K/V representations at lower precision ([Quantized KV](/llms/quantization/))
 - reducing the number of stored K/V vectors
 - selectively retaining important tokens
 - sharing or grouping K/V representations
@@ -157,7 +158,7 @@ Reduce KV Cache memory while keeping the impact on generation quality as small a
 
 ## Multi-Head Attention and KV Cache
 
-**Multi-Head Attention (MHA)** uses multiple attention heads, where each head has its own **Q, K, and V** projections.
+**[Multi-Head Attention (MHA)](/llms/attention/)** uses multiple attention heads, where each head has its own **Q, K, and V** projections.
 
 During autoregressive generation, the **K and V from previous tokens are stored in the KV Cache** so they don't need to be recomputed.
 

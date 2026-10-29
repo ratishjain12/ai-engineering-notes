@@ -2,6 +2,7 @@
 title: Agent Loop
 description: The loop that sends context to a model, executes the tool it requests, and feeds the result back until the model returns a final answer.
 date: 2026-10-14T06:30:00Z
+related: [agents/tool-calling, agents/planning-and-task-decomposition, agents/context-engineering]
 ---
 
 ## What is an AI agent?
@@ -110,7 +111,7 @@ A production agent needs more controls. It must validate tool arguments, handle 
 
 - An agent uses a model to select its next action.
 - The agent loop controls model calls and tool execution.
-- Tools allow an agent to interact with external systems.
+- [Tools](/agents/tool-calling/) allow an agent to interact with external systems.
 - Tool results become part of the context.
 - A stop condition limits execution.
 - A basic agent loop does not require a large framework.

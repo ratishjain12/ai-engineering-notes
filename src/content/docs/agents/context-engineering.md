@@ -2,6 +2,7 @@
 title: Context Engineering
 description: How to select, organize and update the information an LLM receives, from recent-message selection to summarization, retrieval and structured state.
 date: 2026-10-21T12:29:00Z
+related: [agents/agent-memory, agents/tool-calling, agents/agent-loop]
 ---
 
 An LLM generates a response from the information that it receives.
@@ -238,7 +239,7 @@ This can be more reliable than extracting every important fact from a long conve
 
 Context and memory are related, but they are not the same.
 
-**Memory** is information that an application stores for future use.
+**[Memory](/agents/agent-memory/)** is information that an application stores for future use.
 
 **Context** is the information that the application provides to the model for a particular request.
 
@@ -252,7 +253,7 @@ Not every stored fact needs to be included in every request.
 
 ## **Context Engineering and Tool Calling**
 
-Tool calling and context engineering work together.
+[Tool calling](/agents/tool-calling/) and context engineering work together.
 
 Tool calling allows the model to request actions. Context engineering provides the information needed to choose and use those actions.
 

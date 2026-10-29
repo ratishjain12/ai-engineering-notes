@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+	section: string;
+}
+
+const { section } = Astro.props;
+const posts = (await getCollection('docs', ({ id, data }) => id.startsWith(`${section}/`) && !data.draft)).sort(
+	(a, b) => (a.data.date?.getTime() ?? 0) - (b.data.date?.getTime() ?? 0),
+);
+---
+
+<ul class="not-content m-0 grid list-none gap-5 p-0">
+	{
+		posts.map((post) => (
+			<li>
+				<a href={`/${post.id}/`} class="font-serif text-xl font-medium text-brand-text">
+					{post.data.title}
+				</a>
+				<p class="mt-1 leading-relaxed text-fg-muted">{post.data.description}</p>
+			</li>
+		))
+	}
+</ul>

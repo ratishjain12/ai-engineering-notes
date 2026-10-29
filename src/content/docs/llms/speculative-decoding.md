@@ -2,6 +2,7 @@
 title: Speculative Decoding
 description: How a small draft model proposes tokens and a large target model verifies them together, cutting the sequential steps of LLM generation.
 date: 2026-10-05T06:30:00Z
+related: [llms/kv-cache, llms/quantization, llms/attention]
 ---
 
 ## The problem
@@ -115,7 +116,7 @@ The small model tends to predict similar continuations.
 
 This is important given what we just covered.
 
-KV Cache:
+[KV Cache](/llms/kv-cache/):
 
 > Avoid recomputing previous attention states.
 

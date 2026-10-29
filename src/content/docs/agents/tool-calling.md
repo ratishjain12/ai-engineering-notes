@@ -2,6 +2,7 @@
 title: Tool Calling
 description: How a model requests a function, your application executes it, and the result goes back to the model, plus the failure cases to handle.
 date: 2026-10-16T11:40:00Z
+related: [agents/agent-loop, agents/model-context-protocol, agents/context-engineering]
 ---
 
 ## What is tool calling?
@@ -168,7 +169,7 @@ These concepts work together, but they solve different problems.
 | Decides when to continue or stop. | Identifies the requested tool and its arguments. |
 | Sends results back to the model. | Executes the requested function and returns its result. |
 
-The Agent Loop is the overall process. Tool calling is one part of that process.
+The [Agent Loop](/agents/agent-loop/) is the overall process. Tool calling is one part of that process.
 
 ## Your hands-on task
 

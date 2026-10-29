@@ -2,6 +2,7 @@
 title: Quantization
 description: How storing model weights in fewer bits cuts memory, bandwidth and cost, and what it trades away in numerical precision.
 date: 2026-10-07T06:30:00Z
+related: [llms/kv-cache, llms/fine-tuning, llms/speculative-decoding]
 ---
 
 ## What is Quantization?
@@ -313,7 +314,7 @@ This can make a large difference when serving many requests
 
 This is an important connection to our previous topic.
 
-Quantization can also reduce memory used by the KV cache.
+Quantization can also reduce memory used by the [KV cache](/llms/kv-cache/).
 
 A Quantized KV Cache uses less GPU memory
 

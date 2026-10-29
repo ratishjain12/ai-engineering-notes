@@ -2,6 +2,7 @@
 title: Mixture of Experts
 description: How MoE models use a router to activate only a subset of experts per token, trading engineering complexity for more capacity at a lower compute cost.
 date: 2026-10-12T05:41:34Z
+related: [llms/attention, llms/fine-tuning, llms/quantization]
 ---
 
 Mixture of Experts (MoE) is a model architecture that uses different neural networks, called experts, to process different types of input.

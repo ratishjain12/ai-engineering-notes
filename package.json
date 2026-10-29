@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/mdx": "^8.0.2",
+    "@astrojs/sitemap": "^3.7.4",
     "@astrojs/starlight": "^0.42.4",
     "@astrojs/starlight-tailwind": "^5.0.0",
     "@bruits/satteri-wasm32-wasi": "0.10.5",
