@@ -32,6 +32,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | 10 | [Agent Memory](https://learn.ratishfolio.com/agents/agent-memory/) | Why agents need memory, context vs memory, short-term, long-term, episodic and semantic memory, and the extract, store, retrieve, update and forget lifecycle |
 | 11 | [Planning and Task Decomposition](https://learn.ratishfolio.com/agents/planning-and-task-decomposition/) | Why agents need plans, breaking a goal into tasks, dependencies and status, planning vs execution, static vs dynamic plans, and replanning when a task fails |
 | 12 | [Model Context Protocol](https://learn.ratishfolio.com/agents/model-context-protocol/) | The problem MCP solves, hosts, clients and servers, tools, resources and prompts, tools/list vs tools/call, stdio vs Streamable HTTP, and building a first MCP server |
+| 13 | [Human-in-the-Loop](https://learn.ratishfolio.com/agents/human-in-the-loop/) | Why agents need human checkpoints, approval, missing information and review, the pause, decide and resume flow, and the state an application must manage |
 
 ## Feedback
 

@@ -117,6 +117,7 @@ export default defineConfig({
               { label: 'Day 10 · Agent Memory', slug: 'agents/agent-memory' },
               { label: 'Day 11 · Planning and Task Decomposition', slug: 'agents/planning-and-task-decomposition' },
               { label: 'Day 12 · Model Context Protocol', slug: 'agents/model-context-protocol' },
+              { label: 'Day 13 · Human-in-the-Loop', slug: 'agents/human-in-the-loop' },
             ].filter(({ slug }) => released(slug)),
           ],
         },
