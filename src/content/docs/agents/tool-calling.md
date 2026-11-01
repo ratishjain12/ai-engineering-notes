@@ -155,7 +155,7 @@ Tool calling introduces new failure cases.
 | Missing or invalid arguments | Validate the arguments and return an error. |
 | Tool execution fails | Catch the error and report the failure to the model. |
 | Tool returns a large result | Limit or summarize the result. |
-| Tool performs a sensitive action | Check permissions or ask for approval. |
+| Tool performs a sensitive action | Check permissions or [ask for approval](/agents/human-in-the-loop/). |
 
 Treat tool inputs as untrusted data. A tool that sends emails, deletes files, or changes account settings needs stricter controls than a calculator.
 

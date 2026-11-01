@@ -103,7 +103,7 @@ https://github.com/ratishjain12/ai-engineering-notes/tree/main/examples/agents/h
 
 The example demonstrates:
 
-1. Run read-only tools freely and list the risky ones in `REQUIRES_APPROVAL`.
+1. Run read-only [tools](/agents/tool-calling/) freely and list the risky ones in `REQUIRES_APPROVAL`.
 2. Pause before a risky tool and show the human the pending call.
 3. Approve the call, reject it with feedback, or edit its arguments field by field.
 4. Return the rejection or the edit to the model as the tool output, so it can explain the outcome or change course.
