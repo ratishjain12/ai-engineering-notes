@@ -17,6 +17,11 @@ const logo =
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#1b1814"/><path d="M8 20a8 8 0 0 1 16 0z" fill="#ff6f40"/><rect x="6" y="22.5" width="20" height="2.4" rx="1.2" fill="#f6f1e7"/><rect x="10" y="26.5" width="12" height="1.6" rx=".8" fill="#f6f1e7" opacity=".4"/></svg>',
 	).toString('base64');
 
+const titleSize = (len: number) => (len <= 18 ? 104 : len <= 26 ? 88 : len <= 36 ? 72 : len <= 60 ? 60 : 52);
+
+const clip = (text: string, max: number) =>
+	text.length <= max ? text : text.slice(0, max).replace(/\s+\S*$/, '').replace(/[.,;:!?-]+$/, '') + '…';
+
 const el = (type: string, style: Record<string, unknown>, children?: unknown) => ({ type, props: { style, children } });
 
 export async function renderOg(title: string, description: string | undefined, label: string) {
@@ -30,9 +35,9 @@ export async function renderOg(title: string, description: string | undefined, l
 			]),
 			el('div', { display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: 28 }, [
 				el('div', { fontFamily: 'JetBrains Mono', fontWeight: 600, fontSize: 24, color: '#736b5d', textTransform: 'uppercase', letterSpacing: '0.08em' }, label),
-				el('div', { fontFamily: 'Newsreader', fontWeight: 500, fontSize: title.length > 28 ? 76 : 104, lineHeight: 1.05, letterSpacing: '-0.025em' }, title),
+				el('div', { fontFamily: 'Newsreader', fontWeight: 500, fontSize: titleSize(title.length), lineHeight: 1.08, letterSpacing: '-0.025em', textWrap: 'balance' }, title),
 				description
-					? el('div', { fontFamily: 'IBM Plex Sans', fontSize: 30, lineHeight: 1.4, color: '#564f44', maxWidth: 900 }, description)
+					? el('div', { fontFamily: 'IBM Plex Sans', fontSize: 30, lineHeight: 1.4, color: '#564f44', maxWidth: 900 }, clip(description, title.length > 36 ? 110 : 140))
 					: null,
 			]),
 			el('div', { fontFamily: 'JetBrains Mono', fontWeight: 600, fontSize: 26, color: '#736b5d' }, 'learn.ratishfolio.com'),
