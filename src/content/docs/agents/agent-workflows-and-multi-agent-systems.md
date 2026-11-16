@@ -2,7 +2,7 @@
 title: Agent Workflows and Multi-Agent Systems
 description: How to structure a task as sequential, parallel, conditional or iterative steps, when to split work across multiple agents, and how a coordinator passes information between them, plus a runnable research pipeline.
 date: 2026-11-09T06:30:00Z
-related: [agents/planning-and-task-decomposition, agents/human-in-the-loop, agents/agent-loop]
+related: [agents/planning-and-task-decomposition, agents/human-in-the-loop, agents/agent-reliability-and-failure-recovery]
 ---
 
 An AI agent can perform a task by itself.
@@ -335,7 +335,7 @@ Do not assume that one agent is always correct.
 | Message format | Define a consistent message structure |
 | Shared state | Control how agents access and update data |
 | Task ownership | Define which agent handles each task |
-| Failure handling | Handle failed or unresponsive agents |
+| [Failure handling](/agents/agent-reliability-and-failure-recovery/) | Handle failed or unresponsive agents |
 | Conflicts | Resolve conflicting outputs |
 | Execution limits | Prevent endless communication loops |
 

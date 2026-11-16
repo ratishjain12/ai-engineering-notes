@@ -223,7 +223,7 @@ Suppose the agent must read a documentation page, but the URL returns a 404 erro
 
 The agent has several options:
 
-1. Retry the request if the failure may be temporary.
+1. [Retry](/agents/agent-reliability-and-failure-recovery/) the request if the failure may be temporary.
 2. Search for the documentation at another URL.
 3. Use another reliable source.
 4. Mark the task as failed if it cannot continue.
