@@ -2,7 +2,7 @@
 title: Human-in-the-Loop (HITL)
 description: How an agent pauses at a checkpoint, waits for a human to approve, reject or change an action, and resumes, plus a runnable approval gate for a refund agent.
 date: 2026-11-02T06:30:00Z
-related: [agents/tool-calling, agents/agent-loop, agents/planning-and-task-decomposition]
+related: [agents/tool-calling, agents/agent-loop, agents/agent-reliability-and-failure-recovery]
 ---
 
 An AI agent can perform tasks without human help.

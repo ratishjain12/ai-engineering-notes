@@ -34,6 +34,7 @@ I write up one AI engineering topic at a time: what I understood and the resourc
 | 12 | [Model Context Protocol](https://learn.ratishfolio.com/agents/model-context-protocol/) | The problem MCP solves, hosts, clients and servers, tools, resources and prompts, tools/list vs tools/call, stdio vs Streamable HTTP, and building a first MCP server |
 | 13 | [Human-in-the-Loop](https://learn.ratishfolio.com/agents/human-in-the-loop/) | Why agents need human checkpoints, approval, missing information and review, the pause, decide and resume flow, and the state an application must manage |
 | 14 | [Agent Workflows and Multi-Agent Systems](https://learn.ratishfolio.com/agents/agent-workflows-and-multi-agent-systems/) | Sequential, parallel, conditional and iterative workflows, when to use multiple agents, communication and coordination patterns, resolving disagreements, and custom orchestration vs frameworks |
+| 15 | [Agent Reliability and Failure Recovery](https://learn.ratishfolio.com/agents/agent-reliability-and-failure-recovery/) | Failure modes and classification, retries with exponential backoff, timeouts, checkpointing, idempotency keys, fallbacks, and execution limits |
 
 ## Feedback
 

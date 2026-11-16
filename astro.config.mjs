@@ -119,6 +119,7 @@ export default defineConfig({
               { label: 'Day 12 · Model Context Protocol', slug: 'agents/model-context-protocol' },
               { label: 'Day 13 · Human-in-the-Loop', slug: 'agents/human-in-the-loop' },
               { label: 'Day 14 · Agent Workflows and Multi-Agent Systems', slug: 'agents/agent-workflows-and-multi-agent-systems' },
+              { label: 'Day 15 · Agent Reliability and Failure Recovery', slug: 'agents/agent-reliability-and-failure-recovery' },
             ].filter(({ slug }) => released(slug)),
           ],
         },
